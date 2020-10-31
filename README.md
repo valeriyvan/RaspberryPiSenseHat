@@ -12,3 +12,14 @@ TODO:
 * get/set all pixels in one shot
 * show text with animation
 * show arbitarary image on LED matrix
+
+Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
+
+* Official page on raspberrypi.org [Sense HAT](https://www.raspberrypi.org/products/sense-hat/)
+* Official documentattion [Documentation for Sense HAT](https://www.raspberrypi.org/documentation/hardware/sense-hat/)
+* Official Python module [sense-hat](https://pythonhosted.org/sense-hat/)
+* Source of Python module [sense-hat)](https://github.com/astro-pi/python-sense-hat)
+* [Getting started with the Sense HAT](https://projects.raspberrypi.org/en/projects/getting-started-with-the-sense-hat)
+* Rust library [sensehat-screen](https://docs.rs/sensehat-screen/) where it's expained how RGB is packed int two bytes in so called `Rgb565`
+* Linux [The Frame Buffer Device API](https://www.kernel.org/doc/Documentation/fb/api.txt) used to access pixel buffer
+* Guide to install Swift on Raspberry Pi [buildSwiftOnARM](https://github.com/uraimo/buildSwiftOnARM) used to install prebuilt Swift 5.1.5 TODO: describe what I've done differently
