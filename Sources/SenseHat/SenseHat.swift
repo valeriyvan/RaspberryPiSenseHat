@@ -8,6 +8,9 @@
 
 public class SenseHat {
 
+    // Color is represented with `Rgb565` struct.
+    // Sense Hat uses two bytes per pixel in frame buffer: red, greed and blue
+    // take respectively 5, 6 and 5 bits.
     public struct Rgb565 {
         var value: UInt16
 
@@ -76,6 +79,7 @@ public class SenseHat {
 
         frameBuffer = fb
 
+        // same as `set(color: .black)` but faster
         memset(frameBuffer, 0, 128)
     }
 
@@ -85,7 +89,7 @@ public class SenseHat {
         }
 
         if close(fileDescriptor) != 0 {
-            print("Error closing framebuffer device")
+            print("Error closing framebuffer device.")
         }
     }
 
