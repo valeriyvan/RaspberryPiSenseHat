@@ -1,11 +1,28 @@
-// This is just initial test to test grounds.
-// Blinking all LEDs in matrix with different colors.
+// Blinking LEDs to test grounds.
 
 #if os(Linux)
     import Glibc
 #else
     import Darwin.C
 #endif
+
+struct Rgb565 {
+    var value: UInt16
+
+    init(value: UInt16) {
+        self.value = value
+    }
+
+    init(red: UInt8, green: UInt8, blue: UInt8) {
+        value = (UInt16(red) << 11) | ((UInt16(green) & 0b0011_1111) << 5) | (UInt16(blue) & 0b0001_1111)
+    }
+
+    static var red:   Rgb565 { Rgb565(value: 0b1111_1000_0000_0000) }
+    static var green: Rgb565 { Rgb565(value: 0b0000_0111_1110_0000) }
+    static var blue:  Rgb565 { Rgb565(value: 0b0000_0000_0001_1111) }
+    static var white: Rgb565 { Rgb565(value: 0b1111_1111_1111_1111) }
+    static var black: Rgb565 { Rgb565(value: 0b0000_0000_0000_0000) }
+}
 
 func openFbDev(_ name: String) -> Int32? {
     let fd = open("/dev/" + name, O_RDWR)
@@ -31,6 +48,25 @@ print("Cleaned screen")
 
 print("Started loop")
 
+let sequence: [Rgb565] = [.red, .black, .green, .black, .blue, .black, .white, .black]
+
+for color in sequence {
+    for i in 0..<128/2 {
+        fb.advanced(by: i*2).storeBytes(of: color, as: Rgb565.self)
+    }
+    usleep (1_000_000);
+}
+
+print("Completed loop")
+
+memset(fb, 0, 128)
+print("Cleaned screen")
+
+munmap(fb, 128)
+close(fbfd)
+print("Completed")
+
+/*
 // WTF with `stride(from: 0, to: UInt16.max, by: 100)`???
 // The last value generated is 65400, then crash.
 // There's some problem with `stride(from:to:by:)`.
@@ -49,13 +85,4 @@ for color in stride(from: 0, to: 65535, by: 100) {
     }
     usleep (1_000_000 / 100);
 }
-
-print("Delay before exiting")
-sleep(10);
-
-memset(fb, 0, 128)
-print("Cleaned screen")
-
-munmap(fb, 128)
-close(fbfd)
-print("Completed")
+*/
