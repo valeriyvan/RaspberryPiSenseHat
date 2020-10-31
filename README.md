@@ -11,8 +11,13 @@ TODO:
 * make Swift package
 * get/set individual pixel colors
 * get/set all pixels in one shot
-* show text with animation
+* show arbitrary text with/without animation
 * show arbitarary image on LED matrix
+* show preprocessed video
+* read sensors accelerometer/gyro/magnitometer/humidity
+* read joystick
+* snake game
+* menu to show readings from any of available sensors
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
