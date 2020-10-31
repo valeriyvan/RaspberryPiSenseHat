@@ -1,8 +1,11 @@
+#!/usr/bin/swift
+
 // Blinking LEDs to test grounds.
 
 #if os(Linux)
     import Glibc
 #else
+    import Foundation
     import Darwin.C
 #endif
 
@@ -52,7 +55,7 @@ struct Rgb565 {
 }
 
 func openFbDev(_ name: String) -> Int32? {
-    let fd = open("/dev/" + name, O_RDWR)
+    let fd = open("/dev/" + name, O_RDWR | O_SYNC)
     guard fd > 0 else { return nil }
     return fd
 }
@@ -113,3 +116,8 @@ for color in stride(from: 0, to: 65535, by: 100) {
     usleep (1_000_000 / 100);
 }
 */
+
+// MARK: - Darwin / Xcode Support
+#if os(OSX) || os(iOS)
+private var O_SYNC: CInt { fatalError("Linux only") }
+#endif
