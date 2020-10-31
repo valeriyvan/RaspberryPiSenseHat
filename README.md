@@ -1,4 +1,4 @@
-# RaspberryPiSenseHat
+# Tinkering with Raspberry Pi Sense Hat with Swift
 
 ![Photo](https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/IMG_3366.jpeg "Photo")
 
