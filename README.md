@@ -1,4 +1,4 @@
-# Tinkering with Raspberry Pi Sense Hat with Swift
+# Swift package `SenseHat` for Raspberry Pi shield Sense Hat
 
 ![Photo](https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/IMG_3366.jpeg "Photo")
 
