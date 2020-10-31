@@ -7,6 +7,7 @@ In order to acquire some experience in Swift development for Linux, I started ti
 This repo can remain in an abandoned semi-working state for quite some time. May or may not sometime turn into Swift package with features similar to this [python library](https://pythonhosted.org/sense-hat/). We will see.
 
 TODO:
+* ✅ blink with LED - that what everyone starts from playing with Raspberry Pi
 * get/set individual pixel colors
 * get/set all pixels in one shot
 * show text with animation
