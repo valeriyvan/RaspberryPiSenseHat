@@ -9,6 +9,33 @@
 struct Rgb565 {
     var value: UInt16
 
+    var red: UInt8 {
+        get {
+            UInt8(truncatingIfNeeded: value >> 11)
+        }
+        set(newValue) {
+            value = (value & 0b0000_0111_1111_1111) | (UInt16(newValue) << 11)
+        }
+    }
+
+    var green: UInt8 {
+        get {
+            UInt8(truncatingIfNeeded: (value & 0b0000_0111_1110_0000) >> 5)
+        }
+        set(newValue) {
+            value = (value & 0b1111_1000_0001_1111) | ((UInt16(newValue) & 0b0011_1111) << 5)
+        }
+    }
+
+    var blue: UInt8 {
+        get {
+            UInt8(truncatingIfNeeded: value) & 0b1_1111
+        }
+        set(newValue) {
+            value = (value & 0b1111_1111_1110_0000) | (UInt16(newValue) & 0b0001_1111)
+        }
+    }
+
     init(value: UInt16) {
         self.value = value
     }
