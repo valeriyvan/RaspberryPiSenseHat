@@ -49,11 +49,34 @@ public class SenseHat {
             value = (UInt16(red) << 11) | ((UInt16(green) & 0b0011_1111) << 5) | (UInt16(blue) & 0b0001_1111)
         }
 
-        public static var red:   Rgb565 { Rgb565(value: 0b1111_1000_0000_0000) }
-        public static var green: Rgb565 { Rgb565(value: 0b0000_0111_1110_0000) }
-        public static var blue:  Rgb565 { Rgb565(value: 0b0000_0000_0001_1111) }
-        public static var white: Rgb565 { Rgb565(value: 0b1111_1111_1111_1111) }
-        public static var black: Rgb565 { Rgb565(value: 0b0000_0000_0000_0000) }
+        public static var red: Rgb565
+            { Rgb565(value: 0b1111_1000_0000_0000) }
+        public static var green: Rgb565
+            { Rgb565(value: 0b0000_0111_1110_0000) }
+        public static var blue: Rgb565
+            { Rgb565(value: 0b0000_0000_0001_1111) }
+        public static var white: Rgb565
+            { Rgb565(value: 0b1111_1111_1111_1111) }
+        public static var black: Rgb565
+            { Rgb565(value: 0b0000_0000_0000_0000) }
+        public static var brown: Rgb565
+            { Rgb565(value: 0b1001_1011_0010_0110) } // R:0.6, G:0.4, B:0.2
+        public static var cyan: Rgb565
+            { Rgb565(value: 0b0000_0111_1111_1111) } // R:0.0, G:1.0, B:1.0
+        public static var magenta: Rgb565
+            { Rgb565(value: 0b1111_1000_0001_1111) } // R:1.0, G:0.0, B:1.0
+        public static var yellow: Rgb565
+            { Rgb565(value: 0b1111_1111_1110_0000) } // R:1.0, G:1.0, B:0.0
+        public static var purple: Rgb565
+            { Rgb565(value: 0b1000_0000_0001_0000) } // R:0.5, G:0.0, B:0.5
+        public static var orange: Rgb565
+            { Rgb565(value: 0b1111_1100_0000_0000) } // R:1.0, G:0.5, B:0.0
+        public static var gray: Rgb565
+            { Rgb565(value: 0b1000_0100_0001_0000) } // R:0.5, G:0.5, B:0.5
+        public static var lightGray: Rgb565
+            { Rgb565(value: 0b1010_1101_0101_0101) } // R:2/3, G:2/3, B:2/3
+        public static var darkGray: Rgb565
+            { Rgb565(value: 0b0101_0010_1010_1010) } // R:1/3, G:1/3, B:1/3
     }
 
     private var fileDescriptor: Int32
