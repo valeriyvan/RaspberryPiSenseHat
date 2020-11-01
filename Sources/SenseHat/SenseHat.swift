@@ -1,10 +1,10 @@
-
 #if os(Linux)
     import Glibc
 #else
-    import Foundation
     import Darwin.C
 #endif
+
+import Foundation
 
 public class SenseHat {
 

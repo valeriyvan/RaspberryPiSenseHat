@@ -1,11 +1,10 @@
-
 #if os(Linux)
     import Glibc
 #else
-    import Foundation
     import Darwin.C
 #endif
 
+import Foundation
 import SenseHat
 
 guard let senseHat = SenseHat() else {
@@ -38,7 +37,7 @@ for color in sequence {
 senseHat.set(color: .black)
 
 print("Set all LEDs with Data")
-var data = Data(capacity: 64 * 2)
+var data = Data(count: 64 * 2)
 data.withUnsafeMutableBytes { (bufferPointer: UnsafeMutableRawBufferPointer) -> Void in
     for x in senseHat.xIndices {
         bufferPointer
