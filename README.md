@@ -16,9 +16,9 @@ TODO:
 * ✅ make Swift package
 * ✅ get/set individual pixel colors
 * ✅ get/set all pixels in one shot
-* ✅ show characters on LCD matrix
+* ✅ show characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga)
+* add Ukrainian font
 * show arbitrary text with animation
-* add ukrainian font
 * orientation of LED matrix 0º/90º/180º/270º 
 * show arbitarary image on LED matrix
 * show preprocessed video
