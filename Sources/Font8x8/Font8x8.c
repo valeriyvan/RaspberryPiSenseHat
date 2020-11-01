@@ -6,7 +6,7 @@
 #include "font8x8_hiragana.h"
 #include "font8x8_sga.h"
 
-/***
+/**
 
 All implementation is in included files.
 

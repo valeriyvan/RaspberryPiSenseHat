@@ -93,6 +93,10 @@ public class SenseHat {
     }
 
     public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
+        set(data: data(character: character, color: c, background: b))
+    }
+
+    public func data(character: Character, color c: Rgb565, background b: Rgb565 = .black) -> Data {
         if character.unicodeScalars.count > 1 {
             print("""
                 Character \(character) consists of \(character.unicodeScalars.count) unicode scalars.
@@ -101,33 +105,31 @@ public class SenseHat {
             )
         }
         let unicodeCodePoint = character.unicodeScalars.first!.value
-        let data: Data
         switch unicodeCodePoint {
         case 0x0000...0x007F:
             let i = Int(unicodeCodePoint)
-            data = withUnsafeBytes(of: &font8x8_basic) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_basic) { charData($0, i, c, b) }
         case 0x00A0...0x00FF:
             let i = Int(unicodeCodePoint) - 0x00A0
-            data = withUnsafeBytes(of: &font8x8_ext_latin) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_ext_latin) { charData($0, i, c, b) }
         case 0x2500...0x257F:
             let i = Int(unicodeCodePoint) - 0x2500
-            data = withUnsafeBytes(of: &font8x8_box) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_box) { charData($0, i, c, b) }
         case 0x2580...0x259F:
             let i = Int(unicodeCodePoint) - 0x2580
-            data = withUnsafeBytes(of: &font8x8_block) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_block) { charData($0, i, c, b) }
         case 0x3040...0x309F:
             let i = Int(unicodeCodePoint) - 0x3040
-            data = withUnsafeBytes(of: &font8x8_hiragana) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_hiragana) { charData($0, i, c, b) }
         case 0x0390...0x03C9:
             let i = Int(unicodeCodePoint) - 0x0390
-            data = withUnsafeBytes(of: &font8x8_greek) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_greek) { charData($0, i, c, b) }
         case 0xE541...0xE55A:
             let i = Int(unicodeCodePoint) - 0xE541
-            data = withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
+            return withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
         default:
-            data = Data(count: 64 * 2) // TODO: change this for one of background color
+            return Data(count: 64 * 2) // TODO: change this for one of background color
         }
-        set(data: data)
     }
 
     private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data
@@ -152,6 +154,52 @@ public class SenseHat {
             }
         }
         return data
+    }
+
+    // Shifts frame buffer left adding new raw on the left.
+    // TODO: parameter iterator?
+    private func shift(row: [Rgb565]) {
+        precondition(row.count == yIndices.count)
+        for x in xIndices.dropFirst() {
+            for y in yIndices {
+                let pixel = frameBuffer
+                    .advanced(by: (y * xIndices.count + x) * 2)
+                    .load(as: Rgb565.self)
+                frameBuffer
+                    .advanced(by: (y * xIndices.count + x - 1) * 2)
+                    .storeBytes(of: pixel, as: Rgb565.self)
+            }
+        }
+        for y in yIndices {
+            let pixel = row[y]
+            frameBuffer
+                .advanced(by: (y * xIndices.count + xIndices.last!) * 2)
+                .storeBytes(of: pixel, as: Rgb565.self)
+        }
+    }
+
+    public func show(string: String, speed: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
+        let delay: useconds_t = useconds_t(Double(1_000_000) * speed / Double(xIndices.count))
+        for c in string {
+            let d = data(character: c, color: color, background: background)
+            for x in xIndices {
+                let row = d.withUnsafeBytes { dPtr -> [Rgb565] in
+                    var row = [Rgb565]()
+                    row.reserveCapacity(yIndices.count)
+                    for y in yIndices {
+                        let c = dPtr
+                            .baseAddress!
+                            .advanced(by: (y * xIndices.count + x) * 2)
+                            .assumingMemoryBound(to: Rgb565.self)
+                            .pointee
+                        row.append(c)
+                    }
+                    return row
+                }
+                shift(row: row)
+                usleep(delay)
+            }
+        }
     }
 }
 
@@ -181,6 +229,11 @@ extension SenseHat.Rgb565 {
         set(newValue) {
             value = (value & 0b1111_1111_1110_0000) | (UInt16(newValue) & 0b0001_1111)
         }
+    }
+
+    // Black
+    init() {
+        self.init(value: 0)
     }
 
     init(red: UInt8, green: UInt8, blue: UInt8) {
