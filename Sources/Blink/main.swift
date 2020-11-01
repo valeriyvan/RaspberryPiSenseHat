@@ -80,4 +80,6 @@ showChars(range: 0x0390...0x03C9)
 print("Show sga characters")
 showChars(range: 0xE541...0xE55A)
 
+senseHat.show(string: "*** Raspberry Pi Sense Hat ***", speed: 1.0, color: .yellow, background: .black)
+
 print("End")
