@@ -11,15 +11,17 @@ In order to acquire some experience in Swift development for Linux, I started ti
 
 This repo can remain in an abandoned semi-working state for quite some time. May or may not sometime turn into Swift package with features similar to this [python library](https://pythonhosted.org/sense-hat/). We will see.
 
-TODO:
+Features:
 * ✅ blink with LED - that what everyone starts from playing with Raspberry Pi
-* ✅ make Swift package
-* ✅ get/set individual pixel colors
-* ✅ get/set all pixels in one shot
-* ✅ show characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga)
+* ✅ get/set color to individual pixels
+* ✅ set color to all pixels in one shot
+* ✅ get/set all pixels in one shot (to/from Data)
+* ✅ show 8x8 characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga)
+
+TODO:
 * add Ukrainian font
 * show arbitrary text with animation
-* orientation of LED matrix 0º/90º/180º/270º 
+* set orientation of LED matrix 0º/90º/180º/270º 
 * show arbitarary image on LED matrix
 * show preprocessed video
 * read sensors accelerometer/gyro/magnitometer/humidity
