@@ -14,7 +14,7 @@ This repo can remain in an abandoned semi-working state for quite some time. May
 TODO:
 * ✅ blink with LED - that what everyone starts from playing with Raspberry Pi
 * ✅ make Swift package
-* get/set individual pixel colors
+* ✅ get/set individual pixel colors
 * get/set all pixels in one shot
 * show arbitrary text with/without animation
 * show arbitarary image on LED matrix
