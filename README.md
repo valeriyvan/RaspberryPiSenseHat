@@ -17,10 +17,10 @@ Features:
 * ✅ set color to all pixels in one shot
 * ✅ get/set all pixels in one shot (to/from Data)
 * ✅ show 8x8 characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga)
+* ✅ show arbitrary text with animation
 
 TODO:
 * add Ukrainian font
-* show arbitrary text with animation
 * set orientation of LED matrix 0º/90º/180º/270º 
 * show arbitarary image on LED matrix
 * show preprocessed video
