@@ -93,6 +93,10 @@ public class SenseHat {
     }
 
     public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
+        set(data: data(character: character, color: c, background: b))
+    }
+
+    public func data(character: Character, color c: Rgb565, background b: Rgb565 = .black) -> Data {
         if character.unicodeScalars.count > 1 {
             print("""
                 Character \(character) consists of \(character.unicodeScalars.count) unicode scalars.
@@ -151,6 +155,52 @@ public class SenseHat {
         }
         return data
     }
+
+    // Shifts frame buffer left adding new raw on the left.
+    // TODO: parameter iterator?
+    private func shift(row: [Rgb565]) {
+        precondition(row.count == yIndices.count)
+        for x in xIndices.dropFirst() {
+            for y in yIndices {
+                let pixel = frameBuffer
+                    .advanced(by: (y * xIndices.count + x) * 2)
+                    .load(as: Rgb565.self)
+                frameBuffer
+                    .advanced(by: (y * xIndices.count + x - 1) * 2)
+                    .storeBytes(of: pixel, as: Rgb565.self)
+            }
+        }
+        for y in yIndices {
+            let pixel = row[y]
+            frameBuffer
+                .advanced(by: (y * xIndices.count + xIndices.last!) * 2)
+                .storeBytes(of: pixel, as: Rgb565.self)
+        }
+    }
+
+    public func show(string: String, speed: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
+        let delay: useconds_t = useconds_t(Double(1_000_000) * speed / Double(xIndices.count))
+        for c in string {
+            let d = data(character: c, color: color, background: background)
+            for x in xIndices {
+                let row = d.withUnsafeBytes { dPtr -> [Rgb565] in
+                    var row = [Rgb565]()
+                    row.reserveCapacity(yIndices.count)
+                    for y in yIndices {
+                        let c = dPtr
+                            .baseAddress!
+                            .advanced(by: (y * xIndices.count + x) * 2)
+                            .assumingMemoryBound(to: Rgb565.self)
+                            .pointee
+                        row.append(c)
+                    }
+                    return row
+                }
+                shift(row: row)
+                usleep(delay)
+            }
+        }
+    }
 }
 
 extension SenseHat.Rgb565 {
@@ -179,6 +229,11 @@ extension SenseHat.Rgb565 {
         set(newValue) {
             value = (value & 0b1111_1111_1110_0000) | (UInt16(newValue) & 0b0001_1111)
         }
+    }
+
+    // Black
+    init() {
+        self.init(value: 0)
     }
 
     init(red: UInt8, green: UInt8, blue: UInt8) {
