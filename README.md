@@ -16,6 +16,7 @@ TODO:
 * ✅ make Swift package
 * ✅ get/set individual pixel colors
 * ✅ get/set all pixels in one shot
+* orientation of LED matrix 0º/90º/180º/270º 
 * show arbitrary text with/without animation
 * show arbitarary image on LED matrix
 * show preprocessed video
