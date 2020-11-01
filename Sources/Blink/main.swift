@@ -1,11 +1,10 @@
-
 #if os(Linux)
     import Glibc
 #else
-    import Foundation
     import Darwin.C
 #endif
 
+import Foundation
 import SenseHat
 
 guard let senseHat = SenseHat() else {
