@@ -63,12 +63,12 @@ public class SenseHat {
 
     public func set(x: Int, y: Int, color: SenseHat.Rgb565) {
         precondition(xIndices ~= x && yIndices ~= y)
-        frameBuffer.advanced(by: x * y * 2).storeBytes(of: color, as: Rgb565.self)
+        frameBuffer.advanced(by: (x * 8 + y) * 2).storeBytes(of: color, as: Rgb565.self)
     }
 
     public func get(x: Int, y: Int) -> SenseHat.Rgb565 {
         precondition(xIndices ~= x && yIndices ~= y)
-        return frameBuffer.load(fromByteOffset: x * y * 2, as: Rgb565.self)
+        return frameBuffer.load(fromByteOffset: (x * 8 + y) * 2, as: Rgb565.self)
     }
 }
 
