@@ -16,7 +16,7 @@ public class SenseHat {
     }
 
     private var fileDescriptor: Int32
-    private var frameBuffer: UnsafeMutableRawPointer
+    private var frameBuffer: UnsafeMutableRawPointer // TODO: change for buffer pointer
 
     public init?(device: String = "fb1") {
         // TODO: check for /*RPi-Sense FB"*/
@@ -69,6 +69,20 @@ public class SenseHat {
     public func get(x: Int, y: Int) -> SenseHat.Rgb565 {
         precondition(xIndices ~= x && yIndices ~= y)
         return frameBuffer.load(fromByteOffset: (x * 8 + y) * 2, as: Rgb565.self)
+    }
+
+    public func getData() -> Data {
+        Data(
+            buffer: UnsafeBufferPointer(start: frameBuffer.assumingMemoryBound(to: UInt16.self),
+            count: 64)
+        )
+    }
+
+    public func set(data: Data) {
+        precondition(data.count == 64 * 2)
+        data.withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> Void in
+            frameBuffer.copyMemory(from: bufferPointer.baseAddress!, byteCount: bufferPointer.count)
+        }
     }
 }
 
