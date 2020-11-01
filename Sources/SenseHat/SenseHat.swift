@@ -11,6 +11,7 @@
 #endif
 
 import Foundation
+import Font8x8
 
 public class SenseHat {
 
@@ -89,6 +90,68 @@ public class SenseHat {
         data.withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> Void in
             frameBuffer.copyMemory(from: bufferPointer.baseAddress!, byteCount: bufferPointer.count)
         }
+    }
+
+    public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
+        if character.unicodeScalars.count > 1 {
+            print("""
+                Character \(character) consists of \(character.unicodeScalars.count) unicode scalars.
+                Only the first one will be shown.
+                """
+            )
+        }
+        let unicodeCodePoint = character.unicodeScalars.first!.value
+        let data: Data
+        switch unicodeCodePoint {
+        case 0x0000...0x007F:
+            let i = Int(unicodeCodePoint)
+            data = withUnsafeBytes(of: &font8x8_basic) { charData($0, i, c, b) }
+        case 0x00A0...0x00FF:
+            let i = Int(unicodeCodePoint) - 0x00A0
+            data = withUnsafeBytes(of: &font8x8_ext_latin) { charData($0, i, c, b) }
+        case 0x2500...0x257F:
+            let i = Int(unicodeCodePoint) - 0x2500
+            data = withUnsafeBytes(of: &font8x8_box) { charData($0, i, c, b) }
+        case 0x2580...0x259F:
+            let i = Int(unicodeCodePoint) - 0x2580
+            data = withUnsafeBytes(of: &font8x8_block) { charData($0, i, c, b) }
+        case 0x3040...0x309F:
+            let i = Int(unicodeCodePoint) - 0x3040
+            data = withUnsafeBytes(of: &font8x8_hiragana) { charData($0, i, c, b) }
+        case 0x0390...0x03C9:
+            let i = Int(unicodeCodePoint) - 0x0390
+            data = withUnsafeBytes(of: &font8x8_greek) { charData($0, i, c, b) }
+        case 0xE541...0xE55A:
+            let i = Int(unicodeCodePoint) - 0xE541
+            data = withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
+        default:
+            data = Data(count: 64 * 2) // TODO: change this for one of background color
+        }
+        set(data: data)
+    }
+
+    private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data
+    {
+        var data = Data(count: 64 * 2)
+        data.withUnsafeMutableBytes { bufferPointer -> Void in
+            for y in yIndices {
+                let raw = charGenPtr
+                    .baseAddress!
+                    .advanced(by: i * 8 + y)
+                    .assumingMemoryBound(to: UInt8.self)
+                    .pointee
+                var mask: UInt8 = 1
+                for x in xIndices {
+                    let c = raw & mask == 0 ? bgnd : col
+                    bufferPointer
+                        .baseAddress!
+                        .advanced(by: (y * xIndices.count + x) * 2)
+                        .storeBytes(of: c, as: Rgb565.self)
+                    mask = mask << 1
+                }
+            }
+        }
+        return data
     }
 }
 

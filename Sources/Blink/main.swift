@@ -54,5 +54,30 @@ data.withUnsafeMutableBytes { (bufferPointer: UnsafeMutableRawBufferPointer) -> 
     }
 }
 senseHat.set(data: data)
+sleep(3)
+senseHat.set(color: .black)
+
+func showChars(range: ClosedRange<Int>) {
+    for c in range {
+        let c = Character(UnicodeScalar(c)!)
+        senseHat.show(character: c, color: .red)
+        usleep(1_000_000 / 10)
+    }
+}
+
+print("Show ascii characters")
+showChars(range: 0...127)
+print("Show extended latin characters")
+showChars(range: 0x00A0...0x00FF)
+print("Show box drawing characters")
+showChars(range: 0x2500...0x257F)
+print("Show block elements characters")
+showChars(range: 0x2580...0x259F)
+print("Show Hiragana characters")
+showChars(range: 0x3040...0x309F)
+print("Show greek characters")
+showChars(range: 0x0390...0x03C9)
+print("Show sga characters")
+showChars(range: 0xE541...0xE55A)
 
 print("End")
