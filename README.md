@@ -15,7 +15,7 @@ TODO:
 * ✅ blink with LED - that what everyone starts from playing with Raspberry Pi
 * ✅ make Swift package
 * ✅ get/set individual pixel colors
-* get/set all pixels in one shot
+* ✅ get/set all pixels in one shot
 * show arbitrary text with/without animation
 * show arbitarary image on LED matrix
 * show preprocessed video
