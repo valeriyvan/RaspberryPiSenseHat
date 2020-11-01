@@ -18,6 +18,16 @@ let sequence: [SenseHat.Rgb565] =
 
 for color in sequence {
     senseHat.set(color: color)
-    sleep (1)
+    usleep (1_000_000 / 10)
 }
 
+senseHat.set(color: .black)
+for color in sequence {
+    for x in senseHat.xIndices {
+        for y in senseHat.yIndices {
+            senseHat.set(x: x, y: y, color: color)
+            usleep (1_000_000 / 1000)
+            senseHat.set(x: x, y: y, color: .black)
+        }
+    }
+}
