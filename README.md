@@ -23,7 +23,7 @@ TODO:
 * read sensors accelerometer/gyro/magnitometer/humidity
 * read joystick
 * snake game
-* [life](Conway's Game of Life) game
+* [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game
 * menu to show readings from any of available sensors
 * mode for rotating screen depending on gyro readings
 
