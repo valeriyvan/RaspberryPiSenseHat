@@ -32,7 +32,7 @@ public class SenseHat {
         }
 
         guard let fb = mmap(nil, 128, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0) else {
-            print("Can't map framebuffer device.")
+            print("Cannot map framebuffer device.")
             return nil
         }
 
@@ -45,11 +45,11 @@ public class SenseHat {
 
     deinit {
         if munmap(frameBuffer.baseAddress!, 128) != 0 {
-            print("Error unmapping framebuffer device.")
+            print("Cannot unmap framebuffer device.")
         }
 
         if close(fileDescriptor) != 0 {
-            print("Error closing framebuffer device.")
+            print("Cannot close framebuffer device.")
         }
     }
 
@@ -132,8 +132,7 @@ public class SenseHat {
         }
     }
 
-    private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data
-    {
+    private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data {
         var data = Data(count: 64 * 2)
         data.withUnsafeMutableBytes { bufferPointer -> Void in
             for y in yIndices {
