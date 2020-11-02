@@ -155,8 +155,8 @@ public class SenseHat {
         return data
     }
 
-    // Shifts frame buffer left adding new raw on the left.
-    // TODO: parameter iterator?
+    // Shifts frame buffer left adding new raw on the right.
+    // TODO: parameter as iterator to avoid array creation?
     private func shift(row: [Rgb565]) {
         precondition(row.count == yIndices.count)
         for x in xIndices.dropFirst() {
