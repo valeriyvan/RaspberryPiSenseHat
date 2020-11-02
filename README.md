@@ -23,7 +23,9 @@ TODO:
 * read sensors accelerometer/gyro/magnitometer/humidity
 * read joystick
 * snake game
+* [life](Conway's Game of Life) game
 * menu to show readings from any of available sensors
+* mode for rotating screen depending on gyro readings
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
