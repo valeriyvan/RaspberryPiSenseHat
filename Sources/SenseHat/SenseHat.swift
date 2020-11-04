@@ -48,7 +48,7 @@ public class SenseHat {
     }
 
     // For testing only
-    // TODO: find better sorution not to expose this and have access from tests
+    // TODO: find better solution not to expose this and have access from tests
     init(orientation: Orientation = .up) {
         self.fileDescriptor = -1
         self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
