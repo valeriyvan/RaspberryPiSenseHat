@@ -155,20 +155,20 @@ public class SenseHat {
     }
 
     private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data {
-        var data = Data(count: 64 * 2)
+        var data = Data(count: xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
         data.withUnsafeMutableBytes { bufferPointer -> Void in
             for y in yIndices {
-                let raw = charGenPtr
+                let row = charGenPtr
                     .baseAddress!
                     .advanced(by: i * 8 + y)
                     .assumingMemoryBound(to: UInt8.self)
                     .pointee
                 var mask: UInt8 = 1
                 for x in xIndices {
-                    let c = raw & mask == 0 ? bgnd : col
+                    let c = row & mask == 0 ? bgnd : col
                     bufferPointer
                         .baseAddress!
-                        .advanced(by: (y * xIndices.count + x) * 2)
+                        .advanced(by: offset(x: x, y: y))
                         .storeBytes(of: c, as: Rgb565.self)
                     mask = mask << 1
                 }
@@ -203,7 +203,7 @@ public class SenseHat {
                     for y in yIndices {
                         let c = dPtr
                             .baseAddress!
-                            .advanced(by: (y * xIndices.count + x) * 2)
+                            .advanced(by: offset(x: x, y: y))
                             .assumingMemoryBound(to: Rgb565.self)
                             .pointee
                         row.append(c)
