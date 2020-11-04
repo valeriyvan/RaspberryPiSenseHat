@@ -150,7 +150,8 @@ public class SenseHat {
             let i = Int(unicodeCodePoint) - 0xE541
             return withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
         default:
-            return Data(count: 64 * 2) // TODO: change this for one of background color
+            // TODO: change this for one of background color
+            return Data(count: xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
         }
     }
 
@@ -168,7 +169,7 @@ public class SenseHat {
                     let c = row & mask == 0 ? bgnd : col
                     bufferPointer
                         .baseAddress!
-                        .advanced(by: offset(x: x, y: y))
+                        .advanced(by: offset(x: x, y: y) * 2)
                         .storeBytes(of: c, as: Rgb565.self)
                     mask = mask << 1
                 }
@@ -203,7 +204,7 @@ public class SenseHat {
                     for y in yIndices {
                         let c = dPtr
                             .baseAddress!
-                            .advanced(by: offset(x: x, y: y))
+                            .advanced(by: offset(x: x, y: y) * 2)
                             .assumingMemoryBound(to: Rgb565.self)
                             .pointee
                         row.append(c)
