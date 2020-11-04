@@ -13,12 +13,14 @@
 import Foundation
 import Font8x8
 
+// TODO: get rid of 128 magic constant
+
 public class SenseHat {
 
     private var fileDescriptor: Int32
     private var frameBuffer: UnsafeMutableBufferPointer<Rgb565>
 
-    public init?(device: String = "fb1") {
+    public init?(device: String = "fb1", orientation: Orientation = .up) {
         // TODO: check for /*RPi-Sense FB"*/
         // No idea why it's on fb1 but not on fb0.
         // No idea also does it depend on cofiguration or hardcoded to fb1.
@@ -41,6 +43,17 @@ public class SenseHat {
 
         // same as `set(color: .black)` but faster
         memset(frameBuffer.baseAddress!, 0, 128)
+
+        self.orientation = orientation
+    }
+
+    // For testing only
+    // TODO: find better sorution not to expose this and have access from tests
+    init(orientation: Orientation = .up) {
+        self.fileDescriptor = -1
+        self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
+            .allocate(capacity: 128)
+        self.orientation = orientation
     }
 
     deinit {
@@ -50,6 +63,12 @@ public class SenseHat {
 
         if close(fileDescriptor) != 0 {
             print("Cannot close framebuffer device.")
+        }
+    }
+
+    public var orientation: Orientation {
+        didSet(oldOrientation) {
+            rotate(angle: orientation.rawValue - oldOrientation.rawValue)
         }
     }
 
@@ -196,11 +215,91 @@ public class SenseHat {
 }
 
 extension SenseHat {
+    public enum Orientation: Double {
+        case up = 1.5707963267948966 // 𝜋 / 2
+        case right = 0.0
+        case down = 4.7123889803846897 // 3 * 𝜋 / 2
+        case left = 6.2831853071795862 // 𝜋 * 2
+    }
+
+    public func rotate(angle: Double) {
+        var angle = angle.truncatingRemainder(dividingBy: 2.0 * Double.pi)
+        angle = angle < 0.0 ? angle + 2.0 * Double.pi : angle
+        // Double.ulpOfOne doesn't work in this case already after 10 full rotations.
+        let epsilon = 0.0001
+        if fabs(angle - 0.0) < epsilon {
+            // already there
+        } else if fabs(angle - Double.pi / 2.0) < epsilon {
+            transpose()
+            reflectHorizontally()
+        } else if fabs(angle - Double.pi) < epsilon {
+            reflectHorizontally()
+            reflectVertically()
+        } else if fabs(angle - 3.0 * Double.pi / 2.0) < epsilon {
+            transpose()
+            reflectVertically()
+        } else {
+            fatalError("Rotation to arbitrary angle not implemented.")
+        }
+    }
+
+    public func transpose() {
+        // This in place matrix transpose works only for square matrices
+        // https://en.wikipedia.org/wiki/In-place_matrix_transposition#Square_matrices
+        precondition(xIndices.count == yIndices.count)
+        let N = xIndices.count
+        precondition(N > 2)
+        for x in 0 ..< N - 1 {
+            for y in x + 1 ..< N {
+                // swap [x, y] and [y, x]
+                frameBuffer.swapAt(y * N + x, x * N + y)
+            }
+        }
+    }
+
+    public func reflectVertically() {
+        let N = yIndices.count
+        for x in 0 ..< N / 2 {
+            for y in yIndices {
+                // swap [x, y] and [N - x - 1, y]
+                frameBuffer.swapAt(y * xIndices.count + x, y * xIndices.count + N - x - 1)
+            }
+        }
+    }
+
+    public func reflectHorizontally() {
+        let N = xIndices.count
+        for x in xIndices {
+            for y in 0 ..< N / 2 {
+                // swap [x, y] and [x, N - y - 1]
+                frameBuffer.swapAt(y * xIndices.count + x, (N - y - 1) * xIndices.count + x)
+            }
+        }
+    }
+
+}
+
+extension SenseHat: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        var ret = " 01234567\n"
+        for y in xIndices {
+            ret += String(y)
+            for x in yIndices {
+                ret += (frameBuffer[y * xIndices.count + x] == SenseHat.Rgb565.black ? " " : "X")
+            }
+            ret += String(y) + "\n"
+        }
+        ret += " 01234567"
+        return ret
+    }
+}
+
+extension SenseHat {
 
     // Color is represented with `Rgb565` struct.
     // Sense Hat uses two bytes per pixel in frame buffer: red, greed and blue
     // take respectively 5, 6 and 5 bits.
-    public struct Rgb565 {
+    public struct Rgb565: Equatable {
         var value: UInt16
 
         var red: UInt8 {
