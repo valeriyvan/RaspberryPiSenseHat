@@ -127,6 +127,17 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testSetGetData() {
+        let senseHat = SenseHat(orientation: .up)
+        let dataBefore = senseHat.data()
+        senseHat.set(x: 0, y: 0, color: .purple)
+        let dataAfter = senseHat.data()
+        XCTAssertNotEqual(dataBefore, dataAfter)
+        senseHat.set(data: dataBefore)
+        let dataAfterReverting = senseHat.data()
+        XCTAssertEqual(dataBefore, dataAfterReverting)
+    }
+
     func testReflectHorizontally() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("/"), color: .blue)
@@ -175,6 +186,7 @@ final class SenseHatTests: XCTestCase {
         ("testRgb565", testRgb565),
         ("testSetGetPixelColor", testSetGetPixelColor),
         ("testSetMatrixColor", testSetMatrixColor),
+        ("testSetGetData", testSetGetData),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),

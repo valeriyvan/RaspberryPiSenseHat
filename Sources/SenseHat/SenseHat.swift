@@ -52,7 +52,7 @@ public class SenseHat {
     init(orientation: Orientation = .up) {
         self.fileDescriptor = -1
         self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
-            .allocate(capacity: 128)
+            .allocate(capacity: 64)
         self.frameBuffer.initialize(repeating: .black)
         self.orientation = orientation
     }
@@ -98,6 +98,7 @@ public class SenseHat {
     }
 
     public func data() -> Data {
+        precondition(frameBuffer.count == 64)
         return Data(buffer: frameBuffer)
     }
 
