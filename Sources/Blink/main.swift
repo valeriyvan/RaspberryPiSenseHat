@@ -22,12 +22,12 @@ let sequence: [SenseHat.Rgb565] =
      .yellow, .lightGray, .gray, .darkGray, .white, .black]
 
 print("Show string with animation")
-senseHat.show(string: "*** Raspberry Pi Sense Hat ***", speed: 1.0, color: .yellow, background: .black)
+senseHat.show(string: "*** Raspberry Pi Sense Hat ***", speed: 0.3, color: .yellow, background: .black)
 
 print("Set all LEDs with same color")
 for color in sequence {
     senseHat.set(color: color)
-    usleep (1_000_000 / 10)
+    usleep (1_000_000 / 5)
 }
 senseHat.set(color: .black)
 
@@ -69,25 +69,25 @@ func showChars(range: ClosedRange<Int>) {
 }
 
 print("Show ascii characters")
-senseHat.show(string: "Ascii", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Ascii", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0...127)
 print("Show extended latin characters")
-senseHat.show(string: "Extended latin", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Extended latin", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0x00A0...0x00FF)
 print("Show box drawing characters")
-senseHat.show(string: "Box drawing", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Box drawing", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0x2500...0x257F)
 print("Show block elements characters")
-senseHat.show(string: "Block elements", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Block elements", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0x2580...0x259F)
 print("Show Hiragana characters")
-senseHat.show(string: "Hiragana", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Hiragana", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0x3040...0x309F)
 print("Show greek characters")
-senseHat.show(string: "Greek", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "Greek", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0x0390...0x03C9)
 print("Show sga characters")
-senseHat.show(string: "SGA", speed: 0.1, color: .yellow, background: .black)
+senseHat.show(string: "SGA", speed: 0.2, color: .yellow, background: .black)
 showChars(range: 0xE541...0xE55A)
 
 print("Rotating red ^ by 90º counterclockwise 10 full rotations")
