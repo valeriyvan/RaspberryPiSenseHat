@@ -106,7 +106,8 @@ public class SenseHat {
         precondition(data.count == xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
         data.withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> Void in
             // TODO: should be better way to do this
-            let buffer = UnsafeBufferPointer<Rgb565>(start: bufferPointer.baseAddress!.assumingMemoryBound(to: Rgb565.self), count: frameBuffer.count)
+            let start = bufferPointer.baseAddress!.assumingMemoryBound(to: Rgb565.self)
+            let buffer = UnsafeBufferPointer(start: start, count: frameBuffer.count)
             for i in buffer.indices {
                 frameBuffer[i] = buffer[i]
             }
