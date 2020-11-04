@@ -67,6 +67,9 @@ public class SenseHat {
         }
     }
 
+    public var xIndices: Range<Int> { 0..<8 }
+    public var yIndices: Range<Int> { 0..<8 }
+
     public var orientation: Orientation {
         didSet(oldOrientation) {
             rotate(angle: orientation.rawValue - oldOrientation.rawValue)
@@ -78,9 +81,6 @@ public class SenseHat {
             frameBuffer[i] = color
         }
     }
-
-    public var xIndices: Range<Int> { 0..<8 }
-    public var yIndices: Range<Int> { 0..<8 }
 
     private func offset(x: Int, y: Int) -> Int {
         precondition(xIndices ~= x && yIndices ~= y)
