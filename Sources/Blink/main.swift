@@ -83,4 +83,40 @@ showChars(range: 0xE541...0xE55A)
 print("Show string with animation")
 senseHat.show(string: "*** Raspberry Pi Sense Hat ***", speed: 1.0, color: .yellow, background: .black)
 
+print("Rotating red ^ by 90º counterclockwise 10 full rotations")
+senseHat.show(character: Character("^"), color: .red)
+var angle = 0.0
+for _ in 0..<4*10 {
+    angle += Double.pi / 2.0
+    senseHat.rotate(angle: angle)
+    usleep(1_000_000 / 4)
+}
+
+print("Rotating yellow ^ by 90º clockwise 10 full rotations")
+senseHat.show(character: Character("^"), color: .yellow)
+angle = 0.0
+for _ in 0..<4*10 {
+    angle -= Double.pi / 2.0
+    senseHat.rotate(angle: angle)
+    usleep(1_000_000 / 4)
+}
+
+print("Rotating blue ^ by 180º counterclockwise 10 full rotations")
+senseHat.show(character: Character("^"), color: .blue)
+angle = 0.0
+for _ in 0..<2*10 {
+    angle += Double.pi
+    senseHat.rotate(angle: angle)
+    usleep(1_000_000 / 4)
+}
+
+print("Rotating blue ^ by 270º counterclockwise 10 times")
+senseHat.show(character: Character("^"), color: .purple)
+angle = 0.0
+for _ in 0..<10 {
+    angle += 3.0 * Double.pi / 2.0
+    senseHat.rotate(angle: angle)
+    usleep(1_000_000 / 4)
+}
+
 print("End")
