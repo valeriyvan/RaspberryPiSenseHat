@@ -138,6 +138,27 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(dataBefore, dataAfterReverting)
     }
 
+    func testShiftLeft() {
+        let senseHat = SenseHat(orientation: .up)
+        let dataBefore = senseHat.data()
+        senseHat.shiftLeft(addingColomn: Array(repeating: SenseHat.Rgb565.red, count: 8))
+        print(senseHat.debugDescription)
+        for x in senseHat.xIndices.dropLast() {
+            for y in senseHat.yIndices {
+                XCTAssertEqual(senseHat.color(x: x, y: y), .black)
+            }
+        }
+        for y in senseHat.yIndices {
+            XCTAssertEqual(senseHat.color(x: senseHat.xIndices.last!, y: y), .red)
+        }
+        for _ in senseHat.xIndices {
+            senseHat.shiftLeft(addingColomn: Array(repeating: SenseHat.Rgb565.black, count: 8))
+        }
+        let dataAfter = senseHat.data()
+        print(senseHat.debugDescription)
+        XCTAssertEqual(dataBefore, dataAfter)
+    }
+
     func testReflectHorizontally() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("/"), color: .blue)
@@ -187,6 +208,7 @@ final class SenseHatTests: XCTestCase {
         ("testSetGetPixelColor", testSetGetPixelColor),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
+        ("testShiftLeft", testShiftLeft),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),

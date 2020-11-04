@@ -84,7 +84,7 @@ public class SenseHat {
 
     private func offset(x: Int, y: Int) -> Int {
         precondition(xIndices ~= x && yIndices ~= y)
-        return x * yIndices.count + y
+        return y * xIndices.count + x
     }
 
     public func set(x: Int, y: Int, color: Rgb565) {
@@ -94,7 +94,7 @@ public class SenseHat {
 
     public func color(x: Int, y: Int) -> Rgb565 {
         precondition(xIndices ~= x && yIndices ~= y)
-        return frameBuffer[x * yIndices.count + y]
+        return frameBuffer[offset(x: x, y: y)]
     }
 
     public func data() -> Data {
@@ -179,8 +179,8 @@ public class SenseHat {
 
     // Shifts frame buffer left adding new raw on the right.
     // TODO: parameter as iterator to avoid array creation?
-    private func shift(addingRow row: [Rgb565]) {
-        precondition(row.count == yIndices.count)
+    public func shiftLeft(addingColomn colomn: [Rgb565]) {
+        precondition(colomn.count == yIndices.count)
         for x in xIndices.dropFirst() {
             for y in yIndices {
                 let index = offset(x: x, y: y)
@@ -188,7 +188,7 @@ public class SenseHat {
             }
         }
         for y in yIndices {
-            frameBuffer[offset(x: xIndices.last!, y: y)] = row[y]
+            frameBuffer[offset(x: xIndices.last!, y: y)] = colomn[y]
         }
     }
 
@@ -210,7 +210,7 @@ public class SenseHat {
                     }
                     return row
                 }
-                shift(addingRow: row)
+                shiftLeft(addingColomn: row)
                 usleep(delay)
             }
         }
@@ -282,10 +282,10 @@ extension SenseHat {
 extension SenseHat: CustomDebugStringConvertible {
     public var debugDescription: String {
         var ret = " 01234567\n"
-        for y in xIndices {
+        for y in yIndices {
             ret += String(y)
-            for x in yIndices {
-                ret += (frameBuffer[y * xIndices.count + x] == SenseHat.Rgb565.black ? " " : "X")
+            for x in xIndices {
+                ret += (frameBuffer[offset(x: x, y: y)] == SenseHat.Rgb565.black ? " " : "X")
             }
             ret += String(y) + "\n"
         }
