@@ -103,52 +103,90 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(darkGray.red, UInt8(((1.0/3.0*Float(0b1_1111)).rounded(.toNearestOrAwayFromZero))))
     }
 
+    func testSetGetPixelColor() {
+        let senseHat = SenseHat(orientation: .up)
+        senseHat.set(x: 5, y: 6, color: .red)
+        for x in senseHat.xIndices {
+            for y in senseHat.yIndices {
+                if x == 5 && y == 6 {
+                    XCTAssertEqual(senseHat.color(x: x, y: y), .red)
+                } else {
+                    XCTAssertEqual(senseHat.color(x: x, y: y), .black)
+                }
+            }
+        }
+    }
+
+    func testSetMatrixColor() {
+        let senseHat = SenseHat(orientation: .up)
+        senseHat.set(color: .yellow)
+        for x in senseHat.xIndices {
+            for y in senseHat.yIndices {
+                XCTAssertEqual(senseHat.color(x: x, y: y), .yellow)
+            }
+        }
+    }
+
+    func testSetGetData() {
+        let senseHat = SenseHat(orientation: .up)
+        let dataBefore = senseHat.data()
+        senseHat.set(x: 0, y: 0, color: .purple)
+        let dataAfter = senseHat.data()
+        XCTAssertNotEqual(dataBefore, dataAfter)
+        senseHat.set(data: dataBefore)
+        let dataAfterReverting = senseHat.data()
+        XCTAssertEqual(dataBefore, dataAfterReverting)
+    }
+
     func testReflectHorizontally() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("/"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.reflectHorizontally()
         senseHat.reflectHorizontally()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testReflectVertically() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("P"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.reflectVertically()
         senseHat.reflectVertically()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testTranspose() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("8"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.transpose()
         senseHat.transpose()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testRotate90() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("8"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         var angle = 0.0
         for i in 0..<4*10 {
             print(i, angle)
             senseHat.rotate(angle: angle)
             angle += Double.pi / 2.0
         }
-        let rotated = senseHat.getData()
+        let rotated = senseHat.data()
         XCTAssertEqual(sample, rotated)
     }
 
     static var allTests = [
         ("testRgb565", testRgb565),
+        ("testSetGetPixelColor", testSetGetPixelColor),
+        ("testSetMatrixColor", testSetMatrixColor),
+        ("testSetGetData", testSetGetData),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),

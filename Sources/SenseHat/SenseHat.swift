@@ -52,7 +52,8 @@ public class SenseHat {
     init(orientation: Orientation = .up) {
         self.fileDescriptor = -1
         self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
-            .allocate(capacity: 128)
+            .allocate(capacity: 64)
+        self.frameBuffer.initialize(repeating: .black)
         self.orientation = orientation
     }
 
@@ -66,6 +67,9 @@ public class SenseHat {
         }
     }
 
+    public var xIndices: Range<Int> { 0..<8 }
+    public var yIndices: Range<Int> { 0..<8 }
+
     public var orientation: Orientation {
         didSet(oldOrientation) {
             rotate(angle: orientation.rawValue - oldOrientation.rawValue)
@@ -78,9 +82,6 @@ public class SenseHat {
         }
     }
 
-    public var xIndices: Range<Int> { 0..<8 }
-    public var yIndices: Range<Int> { 0..<8 }
-
     private func offset(x: Int, y: Int) -> Int {
         precondition(xIndices ~= x && yIndices ~= y)
         return x * yIndices.count + y
@@ -88,15 +89,16 @@ public class SenseHat {
 
     public func set(x: Int, y: Int, color: Rgb565) {
         precondition(xIndices ~= x && yIndices ~= y)
-        frameBuffer[x * yIndices.count + y] = color
+        frameBuffer[offset(x: x, y: y)] = color
     }
 
-    public func get(x: Int, y: Int) -> Rgb565 {
+    public func color(x: Int, y: Int) -> Rgb565 {
         precondition(xIndices ~= x && yIndices ~= y)
         return frameBuffer[x * yIndices.count + y]
     }
 
-    public func getData() -> Data {
+    public func data() -> Data {
+        precondition(frameBuffer.count == 64)
         return Data(buffer: frameBuffer)
     }
 
@@ -104,7 +106,8 @@ public class SenseHat {
         precondition(data.count == xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
         data.withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> Void in
             // TODO: should be better way to do this
-            let buffer = UnsafeBufferPointer<Rgb565>(start: bufferPointer.baseAddress!.assumingMemoryBound(to: Rgb565.self), count: frameBuffer.count)
+            let start = bufferPointer.baseAddress!.assumingMemoryBound(to: Rgb565.self)
+            let buffer = UnsafeBufferPointer(start: start, count: frameBuffer.count)
             for i in buffer.indices {
                 frameBuffer[i] = buffer[i]
             }
@@ -180,12 +183,12 @@ public class SenseHat {
         precondition(row.count == yIndices.count)
         for x in xIndices.dropFirst() {
             for y in yIndices {
-                let index = y * xIndices.count + x
+                let index = offset(x: x, y: y)
                 frameBuffer[index - 1] = frameBuffer[index]
             }
         }
         for y in yIndices {
-            frameBuffer[y * xIndices.count + xIndices.last!] = row[y]
+            frameBuffer[offset(x: xIndices.last!, y: y)] = row[y]
         }
     }
 
@@ -251,8 +254,7 @@ extension SenseHat {
         precondition(N > 2)
         for x in 0 ..< N - 1 {
             for y in x + 1 ..< N {
-                // swap [x, y] and [y, x]
-                frameBuffer.swapAt(y * N + x, x * N + y)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: y, y: x))
             }
         }
     }
@@ -261,8 +263,7 @@ extension SenseHat {
         let N = yIndices.count
         for x in 0 ..< N / 2 {
             for y in yIndices {
-                // swap [x, y] and [N - x - 1, y]
-                frameBuffer.swapAt(y * xIndices.count + x, y * xIndices.count + N - x - 1)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: N - x - 1, y: y))
             }
         }
     }
@@ -271,8 +272,7 @@ extension SenseHat {
         let N = xIndices.count
         for x in xIndices {
             for y in 0 ..< N / 2 {
-                // swap [x, y] and [x, N - y - 1]
-                frameBuffer.swapAt(y * xIndices.count + x, (N - y - 1) * xIndices.count + x)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: x, y: N - y - 1))
             }
         }
     }
