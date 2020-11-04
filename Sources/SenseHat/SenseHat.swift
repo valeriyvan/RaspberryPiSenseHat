@@ -227,7 +227,7 @@ extension SenseHat {
         angle = angle < 0.0 ? angle + 2.0 * Double.pi : angle
         // Double.ulpOfOne doesn't work in this case already after 10 full rotations.
         let epsilon = 0.0001
-        if fabs(angle - 0.0) < epsilon {
+        if fabs(angle - 0.0) < epsilon || fabs(angle - 2.0 * Double.pi) < epsilon {
             // already there
         } else if fabs(angle - Double.pi / 2.0) < epsilon {
             transpose()
