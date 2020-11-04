@@ -92,12 +92,12 @@ public class SenseHat {
         frameBuffer[x * yIndices.count + y] = color
     }
 
-    public func get(x: Int, y: Int) -> Rgb565 {
+    public func color(x: Int, y: Int) -> Rgb565 {
         precondition(xIndices ~= x && yIndices ~= y)
         return frameBuffer[x * yIndices.count + y]
     }
 
-    public func getData() -> Data {
+    public func data() -> Data {
         return Data(buffer: frameBuffer)
     }
 

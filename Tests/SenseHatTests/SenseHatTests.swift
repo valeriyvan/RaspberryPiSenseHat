@@ -106,44 +106,44 @@ final class SenseHatTests: XCTestCase {
     func testReflectHorizontally() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("/"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.reflectHorizontally()
         senseHat.reflectHorizontally()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testReflectVertically() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("P"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.reflectVertically()
         senseHat.reflectVertically()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testTranspose() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("8"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         senseHat.transpose()
         senseHat.transpose()
-        let twiceFlipped = senseHat.getData()
+        let twiceFlipped = senseHat.data()
         XCTAssertEqual(sample, twiceFlipped)
     }
 
     func testRotate90() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.show(character: Character("8"), color: .blue)
-        let sample = senseHat.getData()
+        let sample = senseHat.data()
         var angle = 0.0
         for i in 0..<4*10 {
             print(i, angle)
             senseHat.rotate(angle: angle)
             angle += Double.pi / 2.0
         }
-        let rotated = senseHat.getData()
+        let rotated = senseHat.data()
         XCTAssertEqual(sample, rotated)
     }
 
