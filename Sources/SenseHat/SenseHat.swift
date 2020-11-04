@@ -89,7 +89,7 @@ public class SenseHat {
 
     public func set(x: Int, y: Int, color: Rgb565) {
         precondition(xIndices ~= x && yIndices ~= y)
-        frameBuffer[x * yIndices.count + y] = color
+        frameBuffer[offset(x: x, y: y)] = color
     }
 
     public func color(x: Int, y: Int) -> Rgb565 {
@@ -181,12 +181,12 @@ public class SenseHat {
         precondition(row.count == yIndices.count)
         for x in xIndices.dropFirst() {
             for y in yIndices {
-                let index = y * xIndices.count + x
+                let index = offset(x: x, y: y)
                 frameBuffer[index - 1] = frameBuffer[index]
             }
         }
         for y in yIndices {
-            frameBuffer[y * xIndices.count + xIndices.last!] = row[y]
+            frameBuffer[offset(x: xIndices.last!, y: y)] = row[y]
         }
     }
 
@@ -252,8 +252,7 @@ extension SenseHat {
         precondition(N > 2)
         for x in 0 ..< N - 1 {
             for y in x + 1 ..< N {
-                // swap [x, y] and [y, x]
-                frameBuffer.swapAt(y * N + x, x * N + y)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: y, y: x))
             }
         }
     }
@@ -262,8 +261,7 @@ extension SenseHat {
         let N = yIndices.count
         for x in 0 ..< N / 2 {
             for y in yIndices {
-                // swap [x, y] and [N - x - 1, y]
-                frameBuffer.swapAt(y * xIndices.count + x, y * xIndices.count + N - x - 1)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: N - x - 1, y: y))
             }
         }
     }
@@ -272,8 +270,7 @@ extension SenseHat {
         let N = xIndices.count
         for x in xIndices {
             for y in 0 ..< N / 2 {
-                // swap [x, y] and [x, N - y - 1]
-                frameBuffer.swapAt(y * xIndices.count + x, (N - y - 1) * xIndices.count + x)
+                frameBuffer.swapAt(offset(x: x, y: y), offset(x: x, y: N - y - 1))
             }
         }
     }
