@@ -142,7 +142,6 @@ final class SenseHatTests: XCTestCase {
         let senseHat = SenseHat(orientation: .up)
         let dataBefore = senseHat.data()
         senseHat.shiftLeft(addingColomn: Array(repeating: SenseHat.Rgb565.red, count: 8))
-        print(senseHat.debugDescription)
         for x in senseHat.xIndices.dropLast() {
             for y in senseHat.yIndices {
                 XCTAssertEqual(senseHat.color(x: x, y: y), .black)
@@ -155,7 +154,6 @@ final class SenseHatTests: XCTestCase {
             senseHat.shiftLeft(addingColomn: Array(repeating: SenseHat.Rgb565.black, count: 8))
         }
         let dataAfter = senseHat.data()
-        print(senseHat.debugDescription)
         XCTAssertEqual(dataBefore, dataAfter)
     }
 
@@ -194,8 +192,7 @@ final class SenseHatTests: XCTestCase {
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         var angle = 0.0
-        for i in 0..<4*10 {
-            print(i, angle)
+        for _ in 0..<4*10 {
             senseHat.rotate(angle: angle)
             angle += Double.pi / 2.0
         }
