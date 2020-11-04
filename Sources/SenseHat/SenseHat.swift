@@ -179,7 +179,7 @@ public class SenseHat {
 
     // Shifts frame buffer left adding new raw on the right.
     // TODO: parameter as iterator to avoid array creation?
-    private func shift(row: [Rgb565]) {
+    private func shift(addingRow row: [Rgb565]) {
         precondition(row.count == yIndices.count)
         for x in xIndices.dropFirst() {
             for y in yIndices {
@@ -210,7 +210,7 @@ public class SenseHat {
                     }
                     return row
                 }
-                shift(row: row)
+                shift(addingRow: row)
                 usleep(delay)
             }
         }
