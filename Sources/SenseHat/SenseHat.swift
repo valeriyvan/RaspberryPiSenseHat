@@ -53,6 +53,7 @@ public class SenseHat {
         self.fileDescriptor = -1
         self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
             .allocate(capacity: 128)
+        self.frameBuffer.initialize(repeating: .black)
         self.orientation = orientation
     }
 
