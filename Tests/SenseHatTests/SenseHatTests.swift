@@ -103,7 +103,7 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(darkGray.red, UInt8(((1.0/3.0*Float(0b1_1111)).rounded(.toNearestOrAwayFromZero))))
     }
 
-    func testSetGetColor() {
+    func testSetGetPixelColor() {
         let senseHat = SenseHat(orientation: .up)
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.xIndices {
@@ -113,6 +113,16 @@ final class SenseHatTests: XCTestCase {
                 } else {
                     XCTAssertEqual(senseHat.color(x: x, y: y), .black)
                 }
+            }
+        }
+    }
+
+    func testSetMatrixColor() {
+        let senseHat = SenseHat(orientation: .up)
+        senseHat.set(color: .yellow)
+        for x in senseHat.xIndices {
+            for y in senseHat.yIndices {
+                XCTAssertEqual(senseHat.color(x: x, y: y), .yellow)
             }
         }
     }
@@ -163,7 +173,8 @@ final class SenseHatTests: XCTestCase {
 
     static var allTests = [
         ("testRgb565", testRgb565),
-        ("testSetGetColor", testSetGetColor),
+        ("testSetGetPixelColor", testSetGetPixelColor),
+        ("testSetMatrixColor", testSetMatrixColor),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),
