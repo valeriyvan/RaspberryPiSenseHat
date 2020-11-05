@@ -17,8 +17,8 @@ Features:
 * ✅ rotating of LED matrix 0º/90º/180º/270º
 
 TODO:
-* set orientation of LED matrix 0º/90º/180º/270º 
-* read sensors accelerometer/gyro/magnitometer/humidity
+* set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it
+* read accelerometer/gyro/magnitometer/humidity sensors
 * read joystick
 * release first version
 * add cyrillic font
