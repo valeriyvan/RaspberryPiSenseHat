@@ -21,6 +21,7 @@ TODO:
 * read accelerometer/gyro/magnitometer/humidity sensors;
 * read joystick;
 * release first version;
+* add example snippets to this README;
 * add cyrillic font;
 * show arbitarary image on LED matrix;
 * show preprocessed video;
