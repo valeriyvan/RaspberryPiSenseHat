@@ -17,12 +17,13 @@ Features:
 * ✅ rotating of LED matrix 0º/90º/180º/270º
 
 TODO:
-* add Ukrainian font
 * set orientation of LED matrix 0º/90º/180º/270º 
-* show arbitarary image on LED matrix
-* show preprocessed video
 * read sensors accelerometer/gyro/magnitometer/humidity
 * read joystick
+* release first version
+* add cyrillic font
+* show arbitarary image on LED matrix
+* show preprocessed video
 * snake game
 * [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game
 * menu to show readings from any of available sensors
