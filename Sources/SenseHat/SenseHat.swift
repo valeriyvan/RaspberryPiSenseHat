@@ -59,12 +59,14 @@ public class SenseHat {
     }
 
     deinit {
-        if munmap(frameBuffer.baseAddress!, 128) != 0 {
-            print("Cannot unmap framebuffer device.")
-        }
+        if fileDescriptor != -1 { // skip in tests
+            if munmap(frameBuffer.baseAddress!, 128) != 0 {
+                print("Cannot unmap framebuffer device.")
+            }
 
-        if close(fileDescriptor) != 0 {
-            print("Cannot close framebuffer device.")
+            if close(fileDescriptor) != 0 {
+                print("Cannot close framebuffer device.")
+            }
         }
     }
 
