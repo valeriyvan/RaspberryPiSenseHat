@@ -13,7 +13,8 @@
 import Foundation
 import Font8x8
 
-// TODO: get rid of 128 magic constant
+// TODO: get rid of 128/64/2 magic constants
+// TODO: get rid of sleep/usleep
 
 public class SenseHat {
 
@@ -84,7 +85,16 @@ public class SenseHat {
 
     private func offset(x: Int, y: Int) -> Int {
         precondition(xIndices ~= x && yIndices ~= y)
-        return y * xIndices.count + x
+        switch orientation {
+        case .up:
+            return y * xIndices.count + x
+        case .right:
+            return 0
+        case .down:
+            return 0
+        case .left:
+            return 0
+        }
     }
 
     public func set(x: Int, y: Int, color: Rgb565) {
@@ -169,7 +179,7 @@ public class SenseHat {
                     let c = row & mask == 0 ? bgnd : col
                     bufferPointer
                         .baseAddress!
-                        .advanced(by: offset(x: x, y: y) * 2)
+                        .advanced(by: offset(x: x, y: y) * MemoryLayout<Rgb565>.stride)
                         .storeBytes(of: c, as: Rgb565.self)
                     mask = mask << 1
                 }
@@ -204,7 +214,7 @@ public class SenseHat {
                     for y in yIndices {
                         let c = dPtr
                             .baseAddress!
-                            .advanced(by: offset(x: x, y: y) * 2)
+                            .advanced(by: offset(x: x, y: y) * MemoryLayout<Rgb565>.stride)
                             .assumingMemoryBound(to: Rgb565.self)
                             .pointee
                         row.append(c)
