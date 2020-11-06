@@ -23,6 +23,7 @@ TODO:
 * release first version;
 * add example snippets to this README;
 * add cyrillic font;
+* replace C fonts with Swift ones;
 * show arbitarary image on LED matrix;
 * show preprocessed video;
 * snake game;
