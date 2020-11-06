@@ -104,7 +104,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColor() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.xIndices {
             for y in senseHat.yIndices {
@@ -118,7 +118,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetMatrixColor() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.set(color: .yellow)
         for x in senseHat.xIndices {
             for y in senseHat.yIndices {
@@ -128,7 +128,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetData() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         let dataBefore = senseHat.data()
         senseHat.set(x: 0, y: 0, color: .purple)
         let dataAfter = senseHat.data()
@@ -139,7 +139,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testShiftLeft() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         let dataBefore = senseHat.data()
         senseHat.shiftLeft(addingColomn: Array(repeating: SenseHat.Rgb565.red, count: 8))
         for x in senseHat.xIndices.dropLast() {
@@ -158,7 +158,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testReflectHorizontally() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("/"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectHorizontally()
@@ -168,7 +168,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testReflectVertically() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("P"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectVertically()
@@ -178,7 +178,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testTranspose() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         senseHat.transpose()
@@ -188,7 +188,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testRotate90() {
-        let senseHat = SenseHat(orientation: .up)
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         var angle = 0.0

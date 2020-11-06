@@ -22,6 +22,17 @@ public class SenseHat {
     private var frameBuffer: UnsafeMutableBufferPointer<Rgb565>
 
     public init?(device: String = "fb1", orientation: Orientation = .up) {
+        self.orientation = orientation
+
+        guard device != "__TEST__" else {
+            print("SenseHat is in test mode")
+            fileDescriptor = -1
+            frameBuffer = UnsafeMutableBufferPointer<Rgb565>
+                .allocate(capacity: 64)
+            frameBuffer.initialize(repeating: .black)
+            return
+        }
+
         // TODO: check for /*RPi-Sense FB"*/
         // No idea why it's on fb1 but not on fb0.
         // No idea also does it depend on cofiguration or hardcoded to fb1.
@@ -42,20 +53,7 @@ public class SenseHat {
         let start = fb.assumingMemoryBound(to: Rgb565.self)
         frameBuffer = UnsafeMutableBufferPointer(start: start, count: 64)
 
-        // same as `set(color: .black)` but faster
-        memset(frameBuffer.baseAddress!, 0, 128)
-
-        self.orientation = orientation
-    }
-
-    // For testing only
-    // TODO: find better solution not to expose this and have access from tests
-    init(orientation: Orientation = .up) {
-        self.fileDescriptor = -1
-        self.frameBuffer = UnsafeMutableBufferPointer<Rgb565>
-            .allocate(capacity: 64)
-        self.frameBuffer.initialize(repeating: .black)
-        self.orientation = orientation
+        frameBuffer.initialize(repeating: .black)
     }
 
     deinit {
@@ -67,6 +65,8 @@ public class SenseHat {
             if close(fileDescriptor) != 0 {
                 print("Cannot close framebuffer device.")
             }
+        } else {
+            frameBuffer.deallocate()
         }
     }
 
