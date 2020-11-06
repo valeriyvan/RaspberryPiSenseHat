@@ -99,6 +99,17 @@ public class SenseHat {
         }
     }
 
+    subscript(x: Int, y: Int) -> Rgb565 {
+        get {
+            precondition(xIndices ~= x && yIndices ~= y)
+            return frameBuffer[offset(x: x, y: y)]
+        }
+        set {
+            precondition(xIndices ~= x && yIndices ~= y)
+            frameBuffer[offset(x: x, y: y)] = newValue
+        }
+    }
+
     public func set(x: Int, y: Int, color: Rgb565) {
         precondition(xIndices ~= x && yIndices ~= y)
         frameBuffer[offset(x: x, y: y)] = color
