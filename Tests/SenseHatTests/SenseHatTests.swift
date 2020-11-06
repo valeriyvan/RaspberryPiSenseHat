@@ -117,6 +117,20 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testSetGetPixelColorSubscript() {
+        let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
+        senseHat[5, 6] = .red
+        for x in senseHat.xIndices {
+            for y in senseHat.yIndices {
+                if x == 5 && y == 6 {
+                    XCTAssertEqual(senseHat[x, y], .red)
+                } else {
+                    XCTAssertEqual(senseHat[x, y], .black)
+                }
+            }
+        }
+    }
+
     func testSetMatrixColor() {
         let senseHat = SenseHat(device: "__TEST__", orientation: .up)!
         senseHat.set(color: .yellow)
@@ -203,6 +217,7 @@ final class SenseHatTests: XCTestCase {
     static var allTests = [
         ("testRgb565", testRgb565),
         ("testSetGetPixelColor", testSetGetPixelColor),
+        ("testSetGetPixelColorSubscript", testSetGetPixelColorSubscript),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
         ("testShiftLeft", testShiftLeft),
