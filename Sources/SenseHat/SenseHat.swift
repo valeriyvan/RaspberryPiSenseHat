@@ -104,26 +104,31 @@ public class SenseHat {
     }
 
     /// Returns offset of `Rgb565` value in frame buffer of pixel with
-    /// coordinates `x` and `y`.
+    /// coordinates `x` and `y` with respect of `orientation` property.
     ///
     /// - Parameters:
     ///   - x: Coordinate x in range `xIndices`.
     ///   - y: Coordinate y in range `yIndices`.
     private func offset(x: Int, y: Int) -> Int {
+        return offset(x: x, y: y, orientation: orientation)
+    }
+
+    private func offset(x: Int, y: Int, orientation: Orientation) -> Int {
         precondition(indices ~= x && indices ~= y)
         switch orientation {
         case .up:
             return y * indices.count + x
         case .right:
-            fatalError("Not implemented")
+            return x * indices.count + indices.count - y - 1
         case .down:
-            fatalError("Not implemented")
+            return (indices.count - y - 1) * indices.count + (indices.count - x - 1)
         case .left:
-            fatalError("Not implemented")
+            return (indices.count  - x - 1) * indices.count + y
         }
     }
 
     /// Accesses pixel with coordinates `x` and `y` allowing set or get its color.
+    /// Coordinates respect `orientation` property.
     ///
     /// - Parameters:
     ///   - x: Coordinate x.
@@ -141,6 +146,7 @@ public class SenseHat {
     }
 
     /// Sets pixel with coordinates `x` and `y` to a new color `color`.
+    /// Coordinates respect `orientation` property.
     ///
     /// - Parameters:
     ///   - x: Coordinate x.
@@ -153,6 +159,7 @@ public class SenseHat {
     }
 
     /// Returns color of pixel with coordinates `x` and `y`.
+    /// Coordinates respect `orientation` property.
     ///
     /// - Parameters:
     ///   - x: Coordinate x.
@@ -164,17 +171,30 @@ public class SenseHat {
         return frameBufferPointer[offset(x: x, y: y)]
     }
 
+    /// Returns color of pixel with coordinates `x` and `y`, disregarding
+    /// `orientation` property.
+    ///
+    /// - Parameters:
+    ///   - x: Coordinate x.
+    ///   - y: Coordinate y.
+    /// - Returns: Color.
+    /// - Precondition: `x` and `y` belong to range `0..<8`.
+    public func color(absoluteX x: Int, absoluteY y: Int) -> Rgb565 {
+        return frameBufferPointer[offset(x: x, y: y, orientation: .up)]
+    }
+
     /// Returns opaque instance of `Data` struct representing colors of all
     /// pixels of LED matrix.
     ///
     /// Returns: Instance of `Data` struct.
     public func data() -> Data {
-        precondition(frameBufferPointer.count == 64)
+        precondition(frameBufferPointer.count == indices.count * indices.count)
         return Data(buffer: frameBufferPointer)
     }
 
     /// Sets all LEDs of matrix to colors according to state when `Data` was read
-    /// with call of `data()` method.
+    /// with call of `data()` method. `orientation` when reading and setting data
+    /// should match.
     ///
     /// - Parameter data: Instance of `Data` struct returned from `data()` method.
     public func set(data: Data) {
@@ -394,18 +414,24 @@ extension SenseHat {
 // MARK: CustomDebugStringConvertible
 
 extension SenseHat: CustomDebugStringConvertible {
+
+    /// Returns string representing LED matrix where not black pixels represented
+    /// with "X" and black - with space. Native matrix orientation is assumed
+    /// here, which is `.up`.
     public var debugDescription: String {
         var ret = " 01234567\n"
         for y in indices {
             ret += String(y)
             for x in indices {
-                ret += (frameBufferPointer[offset(x: x, y: y)] == SenseHat.Rgb565.black ? " " : "X")
+                let pixel = frameBufferPointer[offset(x: x, y: y, orientation: .up)]
+                ret += pixel == SenseHat.Rgb565.black ? " " : "X"
             }
             ret += String(y) + "\n"
         }
         ret += " 01234567"
         return ret
     }
+
 }
 
 // MARK: Rgb565
