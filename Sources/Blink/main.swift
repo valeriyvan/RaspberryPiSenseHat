@@ -22,7 +22,7 @@ let sequence: [SenseHat.Rgb565] =
      .yellow, .lightGray, .gray, .darkGray, .white, .black]
 
 print("Show string with animation")
-senseHat.show(string: "*** Raspberry Pi Sense Hat ***", speed: 0.3, color: .yellow, background: .black)
+senseHat.show(string: "*** Raspberry Pi Sense Hat ***", secPerChar: 0.3, color: .yellow, background: .black)
 
 print("Set all LEDs with same color")
 for color in sequence {
@@ -34,8 +34,8 @@ senseHat.set(color: .black)
 print("Set individual LEDs")
 var delay: useconds_t = 1_000_000 / 100
 for color in sequence {
-    for x in senseHat.xIndices {
-        for y in senseHat.yIndices {
+    for x in senseHat.indices {
+        for y in senseHat.indices {
             senseHat.set(x: x, y: y, color: color)
             usleep(delay)
             delay = delay * 999 / 1000
@@ -48,12 +48,12 @@ senseHat.set(color: .black)
 print("Set all LEDs with Data")
 var data = Data(count: 64 * 2)
 data.withUnsafeMutableBytes { (bufferPointer: UnsafeMutableRawBufferPointer) -> Void in
-    for x in senseHat.xIndices {
+    for x in senseHat.indices {
         bufferPointer
             .baseAddress!
-            .advanced(by: x * senseHat.xIndices.count * 2)
+            .advanced(by: x * senseHat.indices.count * 2)
             .assumingMemoryBound(to: SenseHat.Rgb565.self)
-            .assign(repeating: sequence[x], count: senseHat.yIndices.count)
+            .assign(repeating: sequence[x], count: senseHat.indices.count)
     }
 }
 senseHat.set(data: data)
@@ -69,25 +69,25 @@ func showChars(range: ClosedRange<Int>) {
 }
 
 print("Show ascii characters")
-senseHat.show(string: "Ascii", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Ascii", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0...127)
 print("Show extended latin characters")
-senseHat.show(string: "Extended latin", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Extended latin", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0x00A0...0x00FF)
 print("Show box drawing characters")
-senseHat.show(string: "Box drawing", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Box drawing", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0x2500...0x257F)
 print("Show block elements characters")
-senseHat.show(string: "Block elements", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Block elements", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0x2580...0x259F)
 print("Show Hiragana characters")
-senseHat.show(string: "Hiragana", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Hiragana", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0x3040...0x309F)
 print("Show greek characters")
-senseHat.show(string: "Greek", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Greek", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0x0390...0x03C9)
 print("Show sga characters")
-senseHat.show(string: "SGA", speed: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "SGA", secPerChar: 0.2, color: .yellow, background: .black)
 showChars(range: 0xE541...0xE55A)
 
 print("Rotating red ^ by 90º counterclockwise 10 full rotations")
