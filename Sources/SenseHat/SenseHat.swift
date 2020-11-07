@@ -115,11 +115,11 @@ public class SenseHat {
         case .up:
             return y * indices.count + x
         case .right:
-            return 0
+            fatalError("Not implemented")
         case .down:
-            return 0
+            fatalError("Not implemented")
         case .left:
-            return 0
+            fatalError("Not implemented")
         }
     }
 
