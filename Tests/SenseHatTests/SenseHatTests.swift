@@ -103,15 +103,58 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(darkGray.red, UInt8(((1.0/3.0*Float(0b1_1111)).rounded(.toNearestOrAwayFromZero))))
     }
 
-    func testSetGetPixelColor() {
+    func testSetGetPixelColorUp() {
         let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
                 if x == 5 && y == 6 {
-                    XCTAssertEqual(senseHat.color(x: x, y: y), .red)
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .red)
                 } else {
-                    XCTAssertEqual(senseHat.color(x: x, y: y), .black)
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .black)
+                }
+            }
+        }
+    }
+
+    func testSetGetPixelColorRight() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        senseHat.set(x: 5, y: 6, color: .red)
+        for x in senseHat.indices {
+            for y in senseHat.indices {
+                if x == 1 && y == 5 {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .red)
+                } else {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .black)
+                }
+            }
+        }
+    }
+
+    func testSetGetPixelColorDown() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        senseHat.set(x: 5, y: 6, color: .red)
+        for x in senseHat.indices {
+            for y in senseHat.indices {
+                if x == 2 && y == 1 {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .red)
+                } else {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .black)
+                }
+            }
+        }
+    }
+
+    func testSetGetPixelColorLeft() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        senseHat.set(x: 5, y: 6, color: .red)
+        print(senseHat.debugDescription)
+        for x in senseHat.indices {
+            for y in senseHat.indices {
+                if x == 6 && y == 2 {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .red)
+                } else {
+                    XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .black)
                 }
             }
         }
@@ -152,7 +195,7 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(dataBefore, dataAfterReverting)
     }
 
-    func testShiftLeft() {
+    func testShiftLeftUp() {
         let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
         let dataBefore = senseHat.data()
         senseHat.shiftLeft(addingColumn: Array(repeating: SenseHat.Rgb565.red, count: 8))
@@ -216,11 +259,14 @@ final class SenseHatTests: XCTestCase {
 
     static var allTests = [
         ("testRgb565", testRgb565),
-        ("testSetGetPixelColor", testSetGetPixelColor),
+        ("testSetGetPixelColorUp", testSetGetPixelColorUp),
+        ("testSetGetPixelColorRight", testSetGetPixelColorRight),
+        ("testSetGetPixelColorDown", testSetGetPixelColorDown),
+        ("testSetGetPixelColorLeft", testSetGetPixelColorLeft),
         ("testSetGetPixelColorSubscript", testSetGetPixelColorSubscript),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
-        ("testShiftLeft", testShiftLeft),
+        ("testShiftLeftUp", testShiftLeftUp),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),
