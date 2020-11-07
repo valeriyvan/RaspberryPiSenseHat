@@ -195,23 +195,27 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(dataBefore, dataAfterReverting)
     }
 
-    func testShiftLeftUp() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
-        let dataBefore = senseHat.data()
-        senseHat.shiftLeft(addingColumn: Array(repeating: SenseHat.Rgb565.red, count: 8))
-        for x in senseHat.indices.dropLast() {
-            for y in senseHat.indices {
-                XCTAssertEqual(senseHat.color(x: x, y: y), .black)
+    func testShiftLeftAllOrientations() {
+        for orientation in SenseHat.Orientation.allCases {
+            let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: orientation)!
+            let dataBefore = senseHat.data()
+            let redColumn = Array(repeating: SenseHat.Rgb565.red, count: 8)
+            senseHat.shiftLeft(addingColumn: redColumn)
+            for x in senseHat.indices.dropLast() {
+                for y in senseHat.indices {
+                    XCTAssertEqual(senseHat.color(x: x, y: y), .black)
+                }
             }
+            for y in senseHat.indices {
+                XCTAssertEqual(senseHat.color(x: senseHat.indices.last!, y: y), .red)
+            }
+            let blackColumn = Array(repeating: SenseHat.Rgb565.black, count: 8)
+            for _ in senseHat.indices {
+                senseHat.shiftLeft(addingColumn: blackColumn)
+            }
+            let dataAfter = senseHat.data()
+            XCTAssertEqual(dataBefore, dataAfter)
         }
-        for y in senseHat.indices {
-            XCTAssertEqual(senseHat.color(x: senseHat.indices.last!, y: y), .red)
-        }
-        for _ in senseHat.indices {
-            senseHat.shiftLeft(addingColumn: Array(repeating: SenseHat.Rgb565.black, count: 8))
-        }
-        let dataAfter = senseHat.data()
-        XCTAssertEqual(dataBefore, dataAfter)
     }
 
     func testReflectHorizontally() {
@@ -266,7 +270,7 @@ final class SenseHatTests: XCTestCase {
         ("testSetGetPixelColorSubscript", testSetGetPixelColorSubscript),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
-        ("testShiftLeftUp", testShiftLeftUp),
+        ("testShiftLeftAllOrientations", testShiftLeftAllOrientations),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),
