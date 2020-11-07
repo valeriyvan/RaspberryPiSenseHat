@@ -298,8 +298,9 @@ public class SenseHat {
         precondition(column.count == indices.count)
         for x in indices.dropFirst() {
             for y in indices {
-                let index = offset(x: x, y: y)
-                frameBufferPointer[index - 1] = frameBufferPointer[index]
+                let indexFrom = offset(x: x, y: y)
+                let indexTo = offset(x: x - 1, y: y)
+                frameBufferPointer[indexTo] = frameBufferPointer[indexFrom]
             }
         }
         for y in indices {
@@ -343,7 +344,7 @@ public class SenseHat {
 }
 
 extension SenseHat {
-    public enum Orientation: Double {
+    public enum Orientation: Double, CaseIterable {
         case up = 1.5707963267948966 // 𝜋 / 2
         case right = 0.0
         case down = 4.7123889803846897 // 3 * 𝜋 / 2
