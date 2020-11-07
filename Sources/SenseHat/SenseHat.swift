@@ -221,8 +221,9 @@ public class SenseHat {
     }
 
     /// Returns `Data` struct representing `character` drawn with `color` and
-    /// `background` as foreground and background. Returned value is opaque and
-    /// could be used as parameter in a call of `set(data:)` method.
+    /// `background` as foreground and background. Returned value is opaque,
+    /// respects `orientation` and could be used as parameter in a call
+    /// of `set(data:)` method.
     ///
     /// - Parameters:
     ///   - character: `Character` to be shown on matrix.
@@ -261,8 +262,12 @@ public class SenseHat {
             let i = Int(unicodeCodePoint) - 0xE541
             return withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
         default:
-            // TODO: change this for one of background color
-            return Data(count: indices.count * indices.count * MemoryLayout<Rgb565>.stride)
+            let allBlack =
+                [Rgb565](repeating: .black, count: indices.count * indices.count)
+                    .withUnsafeBytes {
+                        Data($0)
+                    }
+            return allBlack
         }
     }
 

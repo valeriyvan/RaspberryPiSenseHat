@@ -148,7 +148,6 @@ final class SenseHatTests: XCTestCase {
     func testSetGetPixelColorLeft() {
         let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
         senseHat.set(x: 5, y: 6, color: .red)
-        print(senseHat.debugDescription)
         for x in senseHat.indices {
             for y in senseHat.indices {
                 if x == 6 && y == 2 {
@@ -193,6 +192,130 @@ final class SenseHatTests: XCTestCase {
         senseHat.set(data: dataBefore)
         let dataAfterReverting = senseHat.data()
         XCTAssertEqual(dataBefore, dataAfterReverting)
+    }
+
+    func testCharDataUp() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .yellow, background: .blue)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            // Check pixels of box top left
+            for x in 0..<senseHat.indices.count / 2 {
+                for y in 0..<senseHat.indices.count / 2 {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .yellow)
+                }
+            }
+            // Check pixels on right of box top left
+            for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                for y in 0..<senseHat.indices.count / 2 {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+            // Check rest of pixels
+            for x in senseHat.indices {
+                for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+        }
+    }
+
+    func testCharDataRight() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .yellow, background: .blue)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            // Check pixels of box top left
+            for x in senseHat.indices.count / 2 ..< senseHat.indices.count{
+                for y in 0..<senseHat.indices.count / 2 {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .yellow)
+                }
+            }
+            // Check pixels on right of box top left
+            for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+            // Check rest of pixels
+            for x in 0 ..< senseHat.indices.count / 2 {
+                for y in senseHat.indices {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+        }
+    }
+
+    func testCharDataDown() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .yellow, background: .blue)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            // Check pixels of box top left
+            for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .yellow)
+                }
+            }
+            // Check pixels on right of box top left
+            for x in 0 ..< senseHat.indices.count / 2 {
+                for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+            // Check rest of pixels
+            for x in senseHat.indices {
+                for y in 0 ..< senseHat.indices.count / 2 {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+        }
+    }
+
+    func testCharDataLeft() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .yellow, background: .blue)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            // Check pixels of box top left
+            for x in 0 ..< senseHat.indices.count / 2 {
+                for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .yellow)
+                }
+            }
+            // Check pixels on right of box top left
+            for x in 0 ..< senseHat.indices.count / 2 {
+                for y in 0 ..< senseHat.indices.count / 2 {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+            // Check rest of pixels
+            for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                for y in senseHat.indices {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], .blue)
+                }
+            }
+        }
     }
 
     func testShiftLeftAllOrientations() {
@@ -270,6 +393,10 @@ final class SenseHatTests: XCTestCase {
         ("testSetGetPixelColorSubscript", testSetGetPixelColorSubscript),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
+        ("testCharDataUp", testCharDataUp),
+        ("testCharDataRight", testCharDataRight),
+        ("testCharDataDown", testCharDataDown),
+        ("testCharDataLeft", testCharDataLeft),
         ("testShiftLeftAllOrientations", testShiftLeftAllOrientations),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
@@ -277,3 +404,27 @@ final class SenseHatTests: XCTestCase {
         ("testRotate90", testRotate90),
     ]
 }
+
+private extension Data {
+    var customDebugDescription: String {
+        guard count == 128 else {
+            return debugDescription
+        }
+        return withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> String in
+            let start = bufferPointer.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let buffer = UnsafeBufferPointer(start: start, count: 64)
+            var ret = " 01234567\n"
+            for y in 0..<8 {
+                ret += String(y)
+                for x in 0..<8 {
+                    let pixel = buffer[y * 8 + x]
+                    ret += pixel == SenseHat.Rgb565.black ? " " : "X"
+                }
+                ret += String(y) + "\n"
+            }
+            ret += " 01234567"
+            return ret
+        }
+    }
+}
+
