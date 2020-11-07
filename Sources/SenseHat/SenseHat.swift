@@ -16,20 +16,34 @@ import Font8x8
 // TODO: get rid of 128/64/2 magic constants
 // TODO: get rid of sleep/usleep
 
+// MARK: SenseHat
+
 public class SenseHat {
 
     private var fileDescriptor: Int32
-    private var frameBuffer: UnsafeMutableBufferPointer<Rgb565>
+    private var frameBufferPointer: UnsafeMutableBufferPointer<Rgb565>
 
-    public init?(device: String = "fb1", orientation: Orientation = .up) {
+    /// Creates `SenseHat` object representing Raspberry Pi Sense Hat shield.
+    /// Tries to open frame buffer file on location `/dev/XXX` where `XXX` is
+    /// provided with parameter `frameBuffer`. Result of initializer is `nil`
+    /// if openning frame buffer file fails.
+    ///
+    /// It doesn't make sense to create several instances of `SenseHat` class
+    /// openning same frame buffer file. Result of doing this undefined.
+    ///
+    /// - Parameters:
+    ///   - frameBuffer: Name of frame buffer file. Usually it's `"fb0"`
+    ///  or `"fb1"` depending on your setup.
+    ///   - orientation: Default orientation of LED matrix.
+    public init?(frameBuffer: String = "fb1", orientation: Orientation = .up) {
         self.orientation = orientation
 
-        guard device != "__TEST__" else {
+        guard frameBuffer != "__TEST__" else {
             print("SenseHat is in test mode")
             fileDescriptor = -1
-            frameBuffer = UnsafeMutableBufferPointer<Rgb565>
+            frameBufferPointer = UnsafeMutableBufferPointer<Rgb565>
                 .allocate(capacity: 64)
-            frameBuffer.initialize(repeating: .black)
+            frameBufferPointer.initialize(repeating: .black)
             return
         }
 
@@ -38,7 +52,7 @@ public class SenseHat {
         // No idea also does it depend on cofiguration or hardcoded to fb1.
         // Not idea should be some kind of discovery implemented.
 
-        fileDescriptor = open("/dev/" + device, O_RDWR | O_SYNC)
+        fileDescriptor = open("/dev/" + frameBuffer, O_RDWR | O_SYNC)
 
         guard fileDescriptor > 0 else {
             print("Cannot open framebuffer device.")
@@ -51,14 +65,14 @@ public class SenseHat {
         }
 
         let start = fb.assumingMemoryBound(to: Rgb565.self)
-        frameBuffer = UnsafeMutableBufferPointer(start: start, count: 64)
+        frameBufferPointer = UnsafeMutableBufferPointer(start: start, count: 64)
 
-        frameBuffer.initialize(repeating: .black)
+        frameBufferPointer.initialize(repeating: .black)
     }
 
     deinit {
         if fileDescriptor != -1 { // skip in tests
-            if munmap(frameBuffer.baseAddress!, 128) != 0 {
+            if munmap(frameBufferPointer.baseAddress!, 128) != 0 {
                 print("Cannot unmap framebuffer device.")
             }
 
@@ -66,30 +80,40 @@ public class SenseHat {
                 print("Cannot close framebuffer device.")
             }
         } else {
-            frameBuffer.deallocate()
+            frameBufferPointer.deallocate()
         }
     }
 
-    public var xIndices: Range<Int> { 0..<8 }
-    public var yIndices: Range<Int> { 0..<8 }
+    public var indices: Range<Int> { 0..<8 }
 
+    // Changes default orientation of LED matrix. Current display of LED matrix
+    // is rotated according to new orientation.
     public var orientation: Orientation {
         didSet(oldOrientation) {
             rotate(angle: orientation.rawValue - oldOrientation.rawValue)
         }
     }
 
+    /// Sets all LEDs of matrix to color `color`.
+    ///
+    /// - Parameter color: Color
     public func set(color: Rgb565) {
-        for i in frameBuffer.indices {
-            frameBuffer[i] = color
+        for i in frameBufferPointer.indices {
+            frameBufferPointer[i] = color
         }
     }
 
+    /// Returns offset of `Rgb565` value in frame buffer of pixel with
+    /// coordinates `x` and `y`.
+    ///
+    /// - Parameters:
+    ///   - x: Coordinate x in range `xIndices`.
+    ///   - y: Coordinate y in range `yIndices`.
     private func offset(x: Int, y: Int) -> Int {
-        precondition(xIndices ~= x && yIndices ~= y)
+        precondition(indices ~= x && indices ~= y)
         switch orientation {
         case .up:
-            return y * xIndices.count + x
+            return y * indices.count + x
         case .right:
             return 0
         case .down:
@@ -99,48 +123,92 @@ public class SenseHat {
         }
     }
 
+    /// Accesses pixel with coordinates `x` and `y` allowing set or get its color.
+    ///
+    /// - Parameters:
+    ///   - x: Coordinate x.
+    ///   - y: Coordinate y.
+    /// - Precondition: `x` and `y` belong to range `0..<8`.
     subscript(x: Int, y: Int) -> Rgb565 {
         get {
-            precondition(xIndices ~= x && yIndices ~= y)
-            return frameBuffer[offset(x: x, y: y)]
+            precondition(indices ~= x && indices ~= y)
+            return frameBufferPointer[offset(x: x, y: y)]
         }
         set {
-            precondition(xIndices ~= x && yIndices ~= y)
-            frameBuffer[offset(x: x, y: y)] = newValue
+            precondition(indices ~= x && indices ~= y)
+            frameBufferPointer[offset(x: x, y: y)] = newValue
         }
     }
 
+    /// Sets pixel with coordinates `x` and `y` to a new color `color`.
+    ///
+    /// - Parameters:
+    ///   - x: Coordinate x.
+    ///   - y: Coordinate y.
+    ///   - color: Color.
+    /// - Precondition: `x` and `y` belong to range `0..<8`.
     public func set(x: Int, y: Int, color: Rgb565) {
-        precondition(xIndices ~= x && yIndices ~= y)
-        frameBuffer[offset(x: x, y: y)] = color
+        precondition(indices ~= x && indices ~= y)
+        frameBufferPointer[offset(x: x, y: y)] = color
     }
 
+    /// Returns color of pixel with coordinates `x` and `y`.
+    ///
+    /// - Parameters:
+    ///   - x: Coordinate x.
+    ///   - y: Coordinate y.
+    /// - Returns: Color.
+    /// - Precondition: `x` and `y` belong to range `0..<8`.
     public func color(x: Int, y: Int) -> Rgb565 {
-        precondition(xIndices ~= x && yIndices ~= y)
-        return frameBuffer[offset(x: x, y: y)]
+        precondition(indices ~= x && indices ~= y)
+        return frameBufferPointer[offset(x: x, y: y)]
     }
 
+    /// Returns opaque instance of `Data` struct representing colors of all
+    /// pixels of LED matrix.
+    ///
+    /// Returns: Instance of `Data` struct.
     public func data() -> Data {
-        precondition(frameBuffer.count == 64)
-        return Data(buffer: frameBuffer)
+        precondition(frameBufferPointer.count == 64)
+        return Data(buffer: frameBufferPointer)
     }
 
+    /// Sets all LEDs of matrix to colors according to state when `Data` was read
+    /// with call of `data()` method.
+    ///
+    /// - Parameter data: Instance of `Data` struct returned from `data()` method.
     public func set(data: Data) {
-        precondition(data.count == xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
+        precondition(data.count == indices.count * indices.count * MemoryLayout<Rgb565>.stride)
         data.withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> Void in
             // TODO: should be better way to do this
             let start = bufferPointer.baseAddress!.assumingMemoryBound(to: Rgb565.self)
-            let buffer = UnsafeBufferPointer(start: start, count: frameBuffer.count)
+            let buffer = UnsafeBufferPointer(start: start, count: frameBufferPointer.count)
             for i in buffer.indices {
-                frameBuffer[i] = buffer[i]
+                frameBufferPointer[i] = buffer[i]
             }
         }
     }
 
+    /// Draws `character` on LED matrix using `color` and `background` as foreground
+    /// and backround.
+    ///
+    /// - Parameters:
+    ///   - character: `Character` to be shown on matrix.
+    ///   - color: Boreground color.
+    ///   - background: Background color.
     public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
         set(data: data(character: character, color: c, background: b))
     }
 
+    /// Returns `Data` struct representing `character` drawn with `color` and
+    /// `background` as foreground and background. Returned value is opaque and
+    /// could be used as parameter in a call of `set(data:)` method.
+    ///
+    /// - Parameters:
+    ///   - character: `Character` to be shown on matrix.
+    ///   - color: Boreground color.
+    ///   - background: Background color.
+    /// - Returns: Instance of `Data` struct.
     public func data(character: Character, color c: Rgb565, background b: Rgb565 = .black) -> Data {
         if character.unicodeScalars.count > 1 {
             print("""
@@ -174,21 +242,21 @@ public class SenseHat {
             return withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
         default:
             // TODO: change this for one of background color
-            return Data(count: xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
+            return Data(count: indices.count * indices.count * MemoryLayout<Rgb565>.stride)
         }
     }
 
     private func charData(_ charGenPtr: UnsafeRawBufferPointer, _ i: Int, _ col: Rgb565, _ bgnd: Rgb565) -> Data {
-        var data = Data(count: xIndices.count * yIndices.count * MemoryLayout<Rgb565>.stride)
+        var data = Data(count: indices.count * indices.count * MemoryLayout<Rgb565>.stride)
         data.withUnsafeMutableBytes { bufferPointer -> Void in
-            for y in yIndices {
+            for y in indices {
                 let row = charGenPtr
                     .baseAddress!
                     .advanced(by: i * 8 + y)
                     .assumingMemoryBound(to: UInt8.self)
                     .pointee
                 var mask: UInt8 = 1
-                for x in xIndices {
+                for x in indices {
                     let c = row & mask == 0 ? bgnd : col
                     bufferPointer
                         .baseAddress!
@@ -201,30 +269,43 @@ public class SenseHat {
         return data
     }
 
-    // Shifts frame buffer left adding new raw on the right.
-    // TODO: parameter as iterator to avoid array creation?
-    public func shiftLeft(addingColomn colomn: [Rgb565]) {
-        precondition(colomn.count == yIndices.count)
-        for x in xIndices.dropFirst() {
-            for y in yIndices {
+    /// Shifts frame buffer left adding new column on the right.
+    /// TODO: parameter as iterator to avoid array creation?
+    ///
+    /// - Parameter column: Colors of column of LEDs which should appear on the right.
+    /// - Precondition: `column` should have exact 8 elements.
+    public func shiftLeft(addingColumn column: [Rgb565]) {
+        precondition(column.count == indices.count)
+        for x in indices.dropFirst() {
+            for y in indices {
                 let index = offset(x: x, y: y)
-                frameBuffer[index - 1] = frameBuffer[index]
+                frameBufferPointer[index - 1] = frameBufferPointer[index]
             }
         }
-        for y in yIndices {
-            frameBuffer[offset(x: xIndices.last!, y: y)] = colomn[y]
+        for y in indices {
+            frameBufferPointer[offset(x: indices.last!, y: y)] = column[y]
         }
     }
 
-    public func show(string: String, speed: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
-        let delay: useconds_t = useconds_t(Double(1_000_000) * speed / Double(xIndices.count))
+    /// Shows `string` in LED matrix with animation from right to left with
+    /// respect of `orientation`. Each character takes `secPerChar` seconds from
+    /// appearing from right edge and before disappearing on left.
+    ///
+    /// - Parameters:
+    ///   - string: String.
+    ///   - secPerChar: Time for one character to slide from one edge of matric
+    ///     to another.
+    ///   - color: Forground color of string.
+    ///   - background: Background color of string.
+    public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
+        let delay: useconds_t = useconds_t(Double(1_000_000) * temp / Double(indices.count))
         for c in string {
             let d = data(character: c, color: color, background: background)
-            for x in xIndices {
+            for x in indices {
                 let row = d.withUnsafeBytes { dPtr -> [Rgb565] in
                     var row = [Rgb565]()
-                    row.reserveCapacity(yIndices.count)
-                    for y in yIndices {
+                    row.reserveCapacity(indices.count)
+                    for y in indices {
                         let c = dPtr
                             .baseAddress!
                             .advanced(by: offset(x: x, y: y) * MemoryLayout<Rgb565>.stride)
@@ -234,7 +315,7 @@ public class SenseHat {
                     }
                     return row
                 }
-                shiftLeft(addingColomn: row)
+                shiftLeft(addingColumn: row)
                 usleep(delay)
             }
         }
@@ -246,13 +327,17 @@ extension SenseHat {
         case up = 1.5707963267948966 // 𝜋 / 2
         case right = 0.0
         case down = 4.7123889803846897 // 3 * 𝜋 / 2
-        case left = 6.2831853071795862 // 𝜋 * 2
+        case left = 6.2831853071795862 // 2 * 𝜋
     }
 
+    /// Rotates LED matrix to angle `angle`.
+    /// At the moment only angles 0, 𝜋 / 2, 3 * 𝜋 / 2 and 2 * 𝜋 are supported.
+    ///
+    /// - Parameter angle: Angle of rotation in radians.
     public func rotate(angle: Double) {
         var angle = angle.truncatingRemainder(dividingBy: 2.0 * Double.pi)
         angle = angle < 0.0 ? angle + 2.0 * Double.pi : angle
-        // Double.ulpOfOne doesn't work in this case already after 10 full rotations.
+        // `Double.ulpOfOne` doesn't work in this case already after 10 full rotations.
         let epsilon = 0.0001
         if fabs(angle - 0.0) < epsilon || fabs(angle - 2.0 * Double.pi) < epsilon {
             // already there
@@ -270,46 +355,51 @@ extension SenseHat {
         }
     }
 
+    /// Transposes LED matrix horizontally with respect of `orientation`.
     public func transpose() {
-        // This in place matrix transpose works only for square matrices
+        // This in place matrix transpose works only for square matrices.
         // https://en.wikipedia.org/wiki/In-place_matrix_transposition#Square_matrices
-        precondition(xIndices.count == yIndices.count)
-        let N = xIndices.count
+        precondition(indices.count == indices.count)
+        let N = indices.count
         precondition(N > 2)
         for x in 0 ..< N - 1 {
             for y in x + 1 ..< N {
-                frameBuffer.swapAt(offset(x: x, y: y), offset(x: y, y: x))
+                frameBufferPointer.swapAt(offset(x: x, y: y), offset(x: y, y: x))
             }
         }
     }
 
+    /// Reflects LED matrix vertically with respect of `orientation`.
     public func reflectVertically() {
-        let N = yIndices.count
+        let N = indices.count
         for x in 0 ..< N / 2 {
-            for y in yIndices {
-                frameBuffer.swapAt(offset(x: x, y: y), offset(x: N - x - 1, y: y))
+            for y in indices {
+                frameBufferPointer.swapAt(offset(x: x, y: y), offset(x: N - x - 1, y: y))
             }
         }
     }
 
+    /// Reflects LED matrix horizontally with respect of `orientation`.
     public func reflectHorizontally() {
-        let N = xIndices.count
-        for x in xIndices {
+        let N = indices.count
+        for x in indices {
             for y in 0 ..< N / 2 {
-                frameBuffer.swapAt(offset(x: x, y: y), offset(x: x, y: N - y - 1))
+                frameBufferPointer.swapAt(offset(x: x, y: y), offset(x: x, y: N - y - 1))
             }
         }
     }
 
 }
 
+// MARK: CustomDebugStringConvertible
+
 extension SenseHat: CustomDebugStringConvertible {
     public var debugDescription: String {
         var ret = " 01234567\n"
-        for y in yIndices {
+        for y in indices {
             ret += String(y)
-            for x in xIndices {
-                ret += (frameBuffer[offset(x: x, y: y)] == SenseHat.Rgb565.black ? " " : "X")
+            for x in indices {
+                ret += (frameBufferPointer[offset(x: x, y: y)] == SenseHat.Rgb565.black ? " " : "X")
             }
             ret += String(y) + "\n"
         }
@@ -317,6 +407,8 @@ extension SenseHat: CustomDebugStringConvertible {
         return ret
     }
 }
+
+// MARK: Rgb565
 
 extension SenseHat {
 
@@ -326,6 +418,7 @@ extension SenseHat {
     public struct Rgb565: Equatable {
         var value: UInt16
 
+        // Red component of color.
         var red: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: value >> 11)
@@ -335,6 +428,7 @@ extension SenseHat {
             }
         }
 
+        // Green component of color.
         var green: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: (value & 0b0000_0111_1110_0000) >> 5)
@@ -344,6 +438,7 @@ extension SenseHat {
             }
         }
 
+        // Blue component of color.
         var blue: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: value) & 0b1_1111
@@ -398,7 +493,7 @@ extension SenseHat {
 
 }
 
-// MARK: - Darwin / Xcode Support
+// MARK: Darwin / Xcode Support
 #if os(OSX) || os(iOS)
 private var O_SYNC: CInt { fatalError("Linux only") }
 #endif
