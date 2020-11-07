@@ -29,8 +29,8 @@ TODO:
 * snake game;
 * [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 * menu to show readings from any of available sensors;
-* mode for rotating screen depending on gyro readings.
-* emulator of SenseHat LED matrix for Web
+* mode for rotating screen depending on gyro readings;
+* emulator of SenseHat LED matrix for Web.
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
