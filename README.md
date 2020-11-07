@@ -15,9 +15,9 @@ Features:
 * ✅ show 8x8 characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga);
 * ✅ show arbitrary text with animation;
 * ✅ rotating of LED matrix 0º/90º/180º/270º;
+* ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 
 TODO:
-* set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 * read accelerometer/gyro/magnitometer/humidity sensors;
 * read joystick;
 * release first version;
@@ -30,6 +30,7 @@ TODO:
 * [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 * menu to show readings from any of available sensors;
 * mode for rotating screen depending on gyro readings.
+* emulator of SenseHat LED matrix for Web
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
