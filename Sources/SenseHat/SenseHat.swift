@@ -210,7 +210,7 @@ public class SenseHat {
     }
 
     /// Draws `character` on LED matrix using `color` and `background` as foreground
-    /// and backround.
+    /// and backround with respect of `orientation` property.
     ///
     /// - Parameters:
     ///   - character: `Character` to be shown on matrix.
