@@ -194,6 +194,106 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(dataBefore, dataAfterReverting)
     }
 
+    func testShowCharacterUp() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        senseHat.show(character: char, color: .purple, background: .darkGray)
+        // Check pixels of box top left
+        for x in 0..<senseHat.indices.count / 2 {
+            for y in 0..<senseHat.indices.count / 2 {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .purple)
+            }
+        }
+        // Check pixels on right of box top left
+        for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+            for y in 0..<senseHat.indices.count / 2 {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+        // Check rest of pixels
+        for x in senseHat.indices {
+            for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+ }
+
+    func testShowCharacterRight() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        senseHat.show(character: char, color: .purple, background: .darkGray)
+        // Check pixels of box top left
+        for x in senseHat.indices.count / 2 ..< senseHat.indices.count{
+            for y in 0..<senseHat.indices.count / 2 {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .purple)
+            }
+        }
+        // Check pixels on right of box top left
+        for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+            for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+        // Check rest of pixels
+        for x in 0 ..< senseHat.indices.count / 2 {
+            for y in senseHat.indices {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+    }
+
+    func testShowCharacterDown() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        senseHat.show(character: char, color: .purple, background: .darkGray)
+        // Check pixels of box top left
+        for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+            for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .purple)
+            }
+        }
+        // Check pixels on right of box top left
+        for x in 0 ..< senseHat.indices.count / 2 {
+            for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+        // Check rest of pixels
+        for x in senseHat.indices {
+            for y in 0 ..< senseHat.indices.count / 2 {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+    }
+
+    func testShowCharacterLeft() {
+        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        senseHat.show(character: char, color: .purple, background: .darkGray)
+        // Check pixels of box top left
+        for x in 0 ..< senseHat.indices.count / 2 {
+            for y in senseHat.indices.count / 2 ..< senseHat.indices.count {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .purple)
+            }
+        }
+        // Check pixels on right of box top left
+        for x in 0 ..< senseHat.indices.count / 2 {
+            for y in 0 ..< senseHat.indices.count / 2 {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+        // Check rest of pixels
+        for x in senseHat.indices.count / 2 ..< senseHat.indices.count {
+            for y in senseHat.indices {
+                XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
+            }
+        }
+    }
+
     func testCharDataUp() {
         let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
@@ -393,6 +493,10 @@ final class SenseHatTests: XCTestCase {
         ("testSetGetPixelColorSubscript", testSetGetPixelColorSubscript),
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
+        ("testShowCharacterUp", testShowCharacterUp),
+        ("testShowCharacterRight", testShowCharacterRight),
+        ("testShowCharacterDown", testShowCharacterDown),
+        ("testShowCharacterLeft", testShowCharacterLeft),
         ("testCharDataUp", testCharDataUp),
         ("testCharDataRight", testCharDataRight),
         ("testCharDataDown", testCharDataDown),
