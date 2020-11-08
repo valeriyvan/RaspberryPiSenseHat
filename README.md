@@ -16,10 +16,10 @@ Features:
 * ✅ show arbitrary text with animation;
 * ✅ rotating of LED matrix 0º/90º/180º/270º;
 * ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
+* ✅ read joystick;
 
 TODO:
 * read accelerometer/gyro/magnitometer/humidity sensors;
-* read joystick;
 * release first version;
 * add example snippets to this README;
 * add cyrillic font;
