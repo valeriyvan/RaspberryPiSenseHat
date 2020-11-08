@@ -17,6 +17,10 @@ guard let senseHat = SenseHat() else {
     fatalError("Can't initialise Raspberry Pi Sense Hat")
 }
 
+let success = senseHat.register(joystickCallback: { button, action in
+    print("Joystick button: \(button), action: \(action)")
+})
+
 let sequence: [SenseHat.Rgb565] =
     [.red, .green, .blue, .brown, .cyan, .magenta, .purple,
      .yellow, .lightGray, .gray, .darkGray, .white, .black]

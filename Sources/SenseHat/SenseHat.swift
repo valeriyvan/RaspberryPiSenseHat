@@ -23,6 +23,11 @@ public class SenseHat {
     private var fileDescriptor: Int32
     private var frameBufferPointer: UnsafeMutableBufferPointer<Rgb565>
 
+    private var joystickCallback: JoystickCallback?
+    private var joystickCallbackDispatchQueue: DispatchQueue?
+    private var joystickTimer: DispatchSourceTimer?
+    private var joystickFileDescriptor: Int32 = -1
+
     /// Creates `SenseHat` object representing Raspberry Pi Sense Hat shield.
     /// Tries to open frame buffer file on location `/dev/XXX` where `XXX` is
     /// provided with parameter `frameBuffer`. Result of initializer is `nil`
@@ -77,11 +82,22 @@ public class SenseHat {
             }
 
             if close(fileDescriptor) != 0 {
-                print("Cannot close framebuffer device.")
+                print("Error \(errno) closing framebuffer device.")
             }
         } else {
             frameBufferPointer.deallocate()
         }
+
+        joystickTimer?.suspend()
+        joystickTimer = nil
+        joystickCallback = nil
+        joystickCallbackDispatchQueue = nil
+        if joystickFileDescriptor != -1 {
+            if close(joystickFileDescriptor) != 0 {
+                print("Error \(errno) closing joystick device file")
+            }
+        }
+
     }
 
     public var indices: Range<Int> { 0..<8 }
@@ -347,6 +363,119 @@ public class SenseHat {
         }
     }
 }
+
+// MARK: Joystick
+
+extension SenseHat {
+    public enum JoystickButtonAction: Int32 {
+        case press = 1, release = 0, `repeat` = 2
+    }
+
+    public enum JoystickButton: UInt16 {
+        case up = 103, right = 106, down = 108, left = 105, enter = 28
+    }
+
+    public typealias JoystickCallback = (JoystickButton, JoystickButtonAction) -> Void
+
+    // Registers callback for joystick actions.
+    //
+    /// - Parameters:
+    ///   - device: Name of device file.
+    ///   - joystickCallback: Callback function.
+    ///   - joystickCallbackDispatchQueue: Dispatch queue for callback.
+    /// - Returns: True if openning joystick device succeeded, false otherwise.
+    ///
+    /// TODO: implement device file lookup
+    public func register(device: String = "event0", joystickCallback: @escaping JoystickCallback, joystickCallbackDispatchQueue: DispatchQueue = .global(qos: .background)) -> Bool {
+        self.joystickCallback = joystickCallback
+        self.joystickCallbackDispatchQueue = joystickCallbackDispatchQueue
+        let device = "/dev/input/" + device
+        joystickFileDescriptor = open(device, O_RDONLY | O_NONBLOCK | O_SYNC)
+        guard joystickFileDescriptor > 0 else {
+            print("Cannot open \(device)")
+            return false
+        }
+        startPollingJoystickDeviceFile()
+        return true
+    }
+
+    private func startPollingJoystickDeviceFile() {
+        let timer = DispatchSource.makeTimerSource(flags: [], queue: .global(qos: .userInteractive))
+        timer.schedule(deadline: .now(), repeating: .milliseconds(10), leeway: .milliseconds(10)) // TODO: parametrize
+        timer.setEventHandler(handler: { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.pollJoystickDeviceFile()
+        })
+        joystickTimer = timer
+        timer.resume()
+    }
+
+    // Could be found, e.g. here https://github.com/spotify/linux/blob/master/include/linux/input.h
+    private struct input_type {
+        let time: timeval
+        let type: UInt16
+        let code: UInt16
+        let value: Int32
+        init() {
+            time = timeval()
+            type = 0
+            code = 0
+            value = 0
+        }
+    }
+
+    private func pollJoystickDeviceFile() {
+        var pfd = pollfd(fd: joystickFileDescriptor, events: Int16(truncatingIfNeeded:POLLIN), revents: 0)
+        let ready = poll(&pfd, 1, -1 /* timeout in ms TODO: this should correspond with timer somehow */)
+        guard ready > -1 else {
+            print("Joystick device file is not ready")
+            return
+        }
+
+        guard pfd.events > 0 else { /* returned events */
+            print("No events read from Joystick device file")
+            return
+        }
+        let inputSize = MemoryLayout<input_type>.stride // TODO: does it make sense?
+        var inputArray = [Int8](repeating: 0, count: inputSize)
+        let readSize = read(pfd.fd, &inputArray, inputSize)
+        guard readSize == MemoryLayout<input_type>.stride else {
+            print("\(readSize) bytes read from Joystick device file")
+            return
+        }
+        let input = inputArray.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> input_type in
+            ptr.baseAddress!.assumingMemoryBound(to: input_type.self).pointee
+        }
+        guard input.type == 1 else {
+            print("Expected to have type 1 read from Joystick device file, have \(input.type). Input is ignored.")
+            return
+        }
+        guard let button = JoystickButton(rawValue: input.code), let action = JoystickButtonAction(rawValue: input.value) else {
+            print("Unexpected code and/or type read from Joystick device file \(input)")
+            return
+        }
+        joystickCallbackDispatchQueue?.async { [weak self] in
+            self?.joystickCallback?(button, action)
+        }
+    }
+
+    /// Unregisters joystick callback registered earlier.
+    public func unregisterJoystickCallback() {
+        joystickTimer?.suspend()
+        joystickTimer = nil
+        joystickCallback = nil
+        joystickCallbackDispatchQueue = nil
+        if joystickFileDescriptor != -1 {
+            if close(joystickFileDescriptor) != 0 {
+                print("Error \(errno) closing joystick device file")
+            }
+            joystickFileDescriptor = -1
+        }
+    }
+
+}
+
+// MARK: Rotation
 
 extension SenseHat {
     public enum Orientation: Double, CaseIterable {
