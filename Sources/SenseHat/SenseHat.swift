@@ -150,7 +150,7 @@ public class SenseHat {
     ///   - x: Coordinate x.
     ///   - y: Coordinate y.
     /// - Precondition: `x` and `y` belong to range `0..<8`.
-    subscript(x: Int, y: Int) -> Rgb565 {
+    public subscript(x: Int, y: Int) -> Rgb565 {
         get {
             precondition(indices ~= x && indices ~= y)
             return frameBufferPointer[offset(x: x, y: y)]
