@@ -35,7 +35,7 @@ TODO:
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
 * Official page on raspberrypi.org [Sense HAT](https://www.raspberrypi.org/products/sense-hat/);
-* Official documentattion [Documentation for Sense HAT](https://www.raspberrypi.org/documentation/hardware/sense-hat/);
+* Official documentation [Documentation for Sense HAT](https://www.raspberrypi.org/documentation/hardware/sense-hat/);
 * Official Python module [sense-hat](https://pythonhosted.org/sense-hat/);
 * Source of Python module [sense-hat)](https://github.com/astro-pi/python-sense-hat);
 * [Getting started with the Sense HAT](https://projects.raspberrypi.org/en/projects/getting-started-with-the-sense-hat);
