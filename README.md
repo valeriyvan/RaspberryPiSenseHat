@@ -18,6 +18,7 @@ Features:
 * ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 * ✅ read joystick;
 * ✅ snake game;
+* ✅ [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 
 TODO:
 * read accelerometer/gyro/magnitometer/humidity sensors;
@@ -27,7 +28,6 @@ TODO:
 * replace C fonts with Swift ones;
 * show arbitarary image on LED matrix;
 * show preprocessed video;
-* [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 * menu to show readings from any of available sensors;
 * mode for rotating screen depending on gyro readings;
 * emulator of SenseHat LED matrix for Web.
