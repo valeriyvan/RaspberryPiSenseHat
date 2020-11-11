@@ -13,7 +13,7 @@ Features:
 * ✅ set color to all pixels in one shot;
 * ✅ get/set all pixels in one shot (to/from Data);
 * ✅ show 8x8 characters on LCD matrix (supported ascii, extended latin, box drawings elements, block elements, Hiragana, Greek, sga);
-* ✅ show arbitrary text with animation;
+* ✅ show arbitrary text (8x8 font, horizontal scroll);
 * ✅ rotating of LED matrix 0º/90º/180º/270º;
 * ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 * ✅ read joystick;
@@ -24,7 +24,8 @@ TODO:
 * read accelerometer/gyro/magnitometer/humidity sensors;
 * release first version;
 * add example snippets to this README;
-* add cyrillic font;
+* add cyrillic font 8x8;
+* add 3x5 font;
 * replace C fonts with Swift ones;
 * show arbitarary image on LED matrix;
 * show preprocessed video;
