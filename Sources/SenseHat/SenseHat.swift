@@ -58,9 +58,8 @@ public class SenseHat {
         // Not idea should be some kind of discovery implemented.
 
         fileDescriptor = open("/dev/" + frameBuffer, O_RDWR | O_SYNC)
-
-        guard fileDescriptor > 0 else {
-            print("Cannot open framebuffer device.")
+        guard fileDescriptor >= 0 else {
+            print("Error \(errno) openning framebuffer device.")
             return nil
         }
 
