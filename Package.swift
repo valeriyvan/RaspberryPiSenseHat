@@ -9,7 +9,9 @@ let package = Package(
         .library(name: "Font8x8", targets: ["Font8x8"]),
         .executable(name: "Blink", targets: ["Blink"]),
         .executable(name: "Snake", targets: ["Snake"]),
-        .executable(name: "Life", targets: ["Life"])
+        .executable(name: "Life", targets: ["Life"]),
+        .executable(name: "Sensors", targets: ["Sensors"]),
+
     ],
     dependencies: [],
     targets: [
@@ -18,6 +20,7 @@ let package = Package(
         .target(name: "Blink", dependencies: ["SenseHat"]),
         .target(name: "Snake", dependencies: ["SenseHat"]),
         .target(name: "Life", dependencies: ["SenseHat"]),
+        .target(name: "Sensors", dependencies: ["SenseHat"]),
         .testTarget(name: "SenseHatTests", dependencies: ["SenseHat"]),
     ]
 )
