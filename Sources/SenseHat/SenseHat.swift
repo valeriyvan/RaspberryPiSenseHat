@@ -37,13 +37,14 @@ public class SenseHat {
     /// openning same frame buffer file. Result of doing this undefined.
     ///
     /// - Parameters:
-    ///   - frameBuffer: Name of frame buffer file. Usually it's `"fb0"`
-    ///  or `"fb1"` depending on your setup.
+    ///   - frameBufferDevice: Name of frame buffer device file. Usually it's
+    ///  `"/dev/fb0"` or `"/dev/fb1"` depending on setup. Use `nil` to discover
+    ///  Sense Hat's frame buffer device but its name `"RPi-Sense FB"`.
     ///   - orientation: Default orientation of LED matrix.
-    public init?(frameBuffer: String = "fb1", orientation: Orientation = .up) {
+    public init?(frameBufferDevice: String? = nil, orientation: Orientation = .up) {
         self.orientation = orientation
 
-        guard frameBuffer != "__TEST__" else {
+        guard let testDevice = frameBufferDevice, testDevice != "__TEST__" else {
             print("SenseHat is in test mode")
             fileDescriptor = -1
             frameBufferPointer = UnsafeMutableBufferPointer<Rgb565>
@@ -52,12 +53,12 @@ public class SenseHat {
             return
         }
 
-        // TODO: check for /*RPi-Sense FB"*/
-        // No idea why it's on fb1 but not on fb0.
-        // No idea also does it depend on cofiguration or hardcoded to fb1.
-        // Not idea should be some kind of discovery implemented.
+        guard let device = SenseHat.frameBufferDevice() else {
+            print("Cannot discover frame buffer device with name RPi-Sense FB")
+            return nil
+        }
 
-        fileDescriptor = open("/dev/" + frameBuffer, O_RDWR | O_SYNC)
+        fileDescriptor = open(device, O_RDWR | O_SYNC)
         guard fileDescriptor >= 0 else {
             print("Error \(errno) openning framebuffer device.")
             return nil
@@ -100,6 +101,27 @@ public class SenseHat {
     }
 
     public var indices: Range<Int> { 0..<8 }
+
+    private static func frameBufferDevice() -> String? {
+        let resourceKeys = Set<URLResourceKey>([.nameKey, .isDirectoryKey])
+        let directoryEnumerator = FileManager.default.enumerator(at: URL(string: "/sys/class/graphics/")!, includingPropertiesForKeys: Array(resourceKeys), options: [.skipsSubdirectoryDescendants], errorHandler: nil)!
+        for case let fileURL as URL in directoryEnumerator {
+            guard let resourceValues = try? fileURL.resourceValues(forKeys: resourceKeys),
+                  let isDirectory = resourceValues.isDirectory,
+                  let device = resourceValues.name
+                else {
+                    continue
+            }
+            guard !isDirectory else { continue }
+            guard device.hasPrefix("fb") else { continue }
+            let name = fileURL.appendingPathComponent("name")
+            guard let deviceName = try? String(contentsOf: name),
+                  deviceName.trimmingCharacters(in: .whitespacesAndNewlines) == "RPi-Sense FB"
+                else { continue }
+            return "/dev/" + device
+        }
+        return nil
+    }
 
     // Changes default orientation of LED matrix. Current display of LED matrix
     // is rotated according to new orientation.
