@@ -1,3 +1,9 @@
+/**
+ *  SenseHat
+ *  Copyright (c) Valeriy Van 2020
+ *  MIT license - see LICENSE.md
+ */
+
 #if os(Linux)
     import Glibc
 #else
