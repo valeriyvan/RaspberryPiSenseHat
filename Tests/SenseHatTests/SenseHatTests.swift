@@ -104,7 +104,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColorUp() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -118,7 +118,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColorRight() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -132,7 +132,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColorDown() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -146,7 +146,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColorLeft() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -160,7 +160,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetPixelColorSubscript() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat[5, 6] = .red
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -174,7 +174,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetMatrixColor() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.set(color: .yellow)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -184,7 +184,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testSetGetData() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         let dataBefore = senseHat.data()
         senseHat.set(x: 0, y: 0, color: .purple)
         let dataAfter = senseHat.data()
@@ -195,7 +195,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testShowCharacterUp() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -220,7 +220,7 @@ final class SenseHatTests: XCTestCase {
  }
 
     func testShowCharacterRight() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -245,7 +245,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testShowCharacterDown() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -270,7 +270,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testShowCharacterLeft() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -295,7 +295,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testCharDataUp() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -326,7 +326,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testCharDataRight() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .right)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -357,7 +357,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testCharDataDown() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .down)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -388,7 +388,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testCharDataLeft() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .left)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -420,7 +420,7 @@ final class SenseHatTests: XCTestCase {
 
     func testShiftLeftAllOrientations() {
         for orientation in SenseHat.Orientation.allCases {
-            let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: orientation)!
+            let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: orientation)!
             let dataBefore = senseHat.data()
             let redColumn = Array(repeating: SenseHat.Rgb565.red, count: 8)
             senseHat.shiftLeft(addingColumn: redColumn)
@@ -442,7 +442,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testReflectHorizontally() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("/"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectHorizontally()
@@ -452,7 +452,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testReflectVertically() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("P"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectVertically()
@@ -462,7 +462,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testTranspose() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         senseHat.transpose()
@@ -472,7 +472,7 @@ final class SenseHatTests: XCTestCase {
     }
 
     func testRotate90() {
-        let senseHat = SenseHat(frameBuffer: "__TEST__", orientation: .up)!
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         var angle = 0.0
