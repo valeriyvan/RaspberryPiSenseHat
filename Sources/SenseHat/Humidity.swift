@@ -3,7 +3,7 @@
  *  Copyright (c) Valeriy Van 2020
  *  MIT license - see LICENSE.md
  */
-
+/*
 #if os(OSX) || os(iOS)
 import Darwin.C
 #else
@@ -154,7 +154,7 @@ extension SenseHat {
         // Make 16 bit value.
         let T_OUT = t_out_h! << 8 | t_out_l!
 
-        // Read the ambient humidity measurement (2 bytes to read) */
+        // Read the ambient humidity measurement (2 bytes to read)
         let h_t_out_l = i2c_smbus_read_byte_data(fileDescriptor, command: H_T_OUT_L)
         let h_t_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: H_T_OUT_H)
 
@@ -199,3 +199,4 @@ extension SenseHat {
     }
 
 }
+*/
