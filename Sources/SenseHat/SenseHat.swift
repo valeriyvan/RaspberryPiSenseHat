@@ -105,6 +105,9 @@ public class SenseHat {
     public var indices: Range<Int> { 0..<8 }
 
     private static func frameBufferDevice() -> String? {
+        #if os(Linux)
+        // FileManager isn't available in WASM.
+        // Doesn't make any sense in browser anyway.
         let resourceKeys = Set<URLResourceKey>([.nameKey, .isDirectoryKey])
         let directoryEnumerator = FileManager.default.enumerator(at: URL(string: "/sys/class/graphics/")!, includingPropertiesForKeys: Array(resourceKeys), options: [.skipsSubdirectoryDescendants], errorHandler: nil)!
         for case let fileURL as URL in directoryEnumerator {
@@ -122,6 +125,7 @@ public class SenseHat {
                 else { continue }
             return "/dev/" + device
         }
+        #endif
         return nil
     }
 
