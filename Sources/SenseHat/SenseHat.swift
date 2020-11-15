@@ -687,6 +687,6 @@ extension SenseHat {
 }
 
 // MARK: Darwin / Xcode Support
-#if os(OSX) || os(iOS)
+//#if os(OSX) || os(iOS)
 private var O_SYNC: CInt {0} //{ fatalError("Linux only") }
-#endif
+//#endif
