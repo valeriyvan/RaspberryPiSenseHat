@@ -4,10 +4,10 @@
  *  MIT license - see LICENSE.md
  */
 
-#if os(Linux)
-    import Glibc
+#if os(OSX) || os(iOS)
+import Darwin.C
 #else
-    import Darwin.C
+import Glibc
 #endif
 
 import Foundation
@@ -197,6 +197,5 @@ extension SenseHat {
         data[0] = value
         return smbus_ioctl(fd, rw: I2C_SMBUS_WRITE, command: command, size: I2C_SMBUS_BYTE_DATA, data: &data)
     }
-
 
 }
