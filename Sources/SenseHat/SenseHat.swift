@@ -609,10 +609,10 @@ extension SenseHat {
     // Sense Hat uses two bytes per pixel in frame buffer: red, greed and blue
     // take respectively 5, 6 and 5 bits.
     public struct Rgb565: Equatable {
-        var value: UInt16
+        public var value: UInt16
 
         // Red component of color.
-        var red: UInt8 {
+        public var red: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: value >> 11)
             }
@@ -622,7 +622,7 @@ extension SenseHat {
         }
 
         // Green component of color.
-        var green: UInt8 {
+        public var green: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: (value & 0b0000_0111_1110_0000) >> 5)
             }
@@ -632,7 +632,7 @@ extension SenseHat {
         }
 
         // Blue component of color.
-        var blue: UInt8 {
+        public var blue: UInt8 {
             get {
                 UInt8(truncatingIfNeeded: value) & 0b1_1111
             }
@@ -641,20 +641,20 @@ extension SenseHat {
             }
         }
 
-        init(value: UInt16) {
+        public init(value: UInt16) {
             self.value = value
         }
 
         // Black
-        init() {
+        public init() {
             self.init(value: 0)
         }
 
-        init(red: UInt8, green: UInt8, blue: UInt8) {
+        public init(red: UInt8, green: UInt8, blue: UInt8) {
             value = (UInt16(red) << 11) | ((UInt16(green) & 0b0011_1111) << 5) | (UInt16(blue) & 0b0001_1111)
         }
 
-        var rgbHexString: String {
+        public var rgbHexString: String {
             String(format: "%02X%02X%02X",
                    UInt8(Double(red) / Double(0b11111) * Double(0xFF)),
                    UInt8(Double(green) / Double(0b111111) * Double(0xFF)),
