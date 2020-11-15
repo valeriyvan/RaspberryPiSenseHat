@@ -391,8 +391,7 @@ public class SenseHat {
                     return row
                 }
                 shiftLeft(addingColumn: row)
-                //usleep(delay)
-                //sleep(1)
+                usleep(delay)
             }
         }
     }
