@@ -484,6 +484,16 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, rotated)
     }
 
+    func testSyncCalledForSet() {
+        var counter = 0
+        func sync(_ frameBuffer: UnsafeMutableBufferPointer<SenseHat.Rgb565>) {
+            counter += 1
+        }
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up, sync: sync)!
+        senseHat.set(color: .white)
+        XCTAssertEqual(counter, 1)
+    }
+
     static var allTests = [
         ("testRgb565", testRgb565),
         ("testSetGetPixelColorUp", testSetGetPixelColorUp),
