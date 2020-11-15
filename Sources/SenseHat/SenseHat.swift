@@ -371,7 +371,9 @@ public class SenseHat {
     ///     to another.
     ///   - color: Forground color of string.
     ///   - background: Background color of string.
-    public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
+    ///   - usleep: function for delaying execution. Workaround for WASM where
+    ///     both usleep and sleep have runtime error.
+    public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black, usleep: ((useconds_t)->Void) = standardUsleep) {
         let delay: useconds_t = useconds_t(Double(1_000_000) * temp / Double(indices.count))
         print(delay)
         for c in string {
@@ -699,3 +701,8 @@ extension SenseHat {
 //#if os(OSX) || os(iOS)
 private var O_SYNC: CInt {0} //{ fatalError("Linux only") }
 //#endif
+
+// Wrapper over standard usleep function
+public func standardUsleep(_ delay: useconds_t) {
+    usleep(delay)
+}
