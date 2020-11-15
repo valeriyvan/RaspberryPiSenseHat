@@ -397,6 +397,32 @@ public class SenseHat {
             }
         }
     }
+
+    public func iterate(string: String, color: Rgb565, background: Rgb565 = .black) -> ()->Bool {
+        var it = string.makeIterator()
+        return { [weak self] in
+            guard let strongSelf = self else { return false }
+            guard let c = it.next() else { return false }
+            let d = strongSelf.data(character: c, color: color, background: background)
+            for x in strongSelf.indices {
+                let row = d.withUnsafeBytes { dPtr -> [Rgb565] in
+                    var row = [Rgb565]()
+                    row.reserveCapacity(strongSelf.indices.count)
+                    for y in strongSelf.indices {
+                        let c = dPtr
+                            .baseAddress!
+                            .advanced(by: strongSelf.offset(x: x, y: y) * MemoryLayout<Rgb565>.stride)
+                            .assumingMemoryBound(to: Rgb565.self)
+                            .pointee
+                        row.append(c)
+                    }
+                    return row
+                }
+                strongSelf.shiftLeft(addingColumn: row)
+            }
+            return true
+        }
+    }
 }
 
 // MARK: Joystick
