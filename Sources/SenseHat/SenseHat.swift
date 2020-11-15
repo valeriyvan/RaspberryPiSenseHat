@@ -373,6 +373,7 @@ public class SenseHat {
     ///   - background: Background color of string.
     public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
         let delay: useconds_t = useconds_t(Double(1_000_000) * temp / Double(indices.count))
+        print(delay)
         for c in string {
             let d = data(character: c, color: color, background: background)
             for x in indices {
@@ -390,7 +391,8 @@ public class SenseHat {
                     return row
                 }
                 shiftLeft(addingColumn: row)
-                usleep(delay)
+                //usleep(delay)
+                sleep(1)
             }
         }
     }
