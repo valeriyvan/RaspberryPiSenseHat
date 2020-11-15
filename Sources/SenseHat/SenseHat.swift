@@ -654,6 +654,14 @@ extension SenseHat {
             value = (UInt16(red) << 11) | ((UInt16(green) & 0b0011_1111) << 5) | (UInt16(blue) & 0b0001_1111)
         }
 
+        var rgbHexString: String {
+            String(format: "%02X%02X%02X",
+                   UInt8(Double(red) / Double(0b11111) * Double(0xFF)),
+                   UInt8(Double(green) / Double(0b111111) * Double(0xFF)),
+                   UInt8(Double(blue) / Double(0b11111) * Double(0xFF))
+            )
+        }
+
         public static var red: Rgb565
             { Rgb565(value: 0b1111_1000_0000_0000) }
         public static var green: Rgb565

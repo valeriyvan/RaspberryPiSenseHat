@@ -14,30 +14,35 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(red.red, 0b0001_1111)
         XCTAssertEqual(red.green, 0)
         XCTAssertEqual(red.blue, 0)
+        XCTAssertEqual(red.rgbHexString, "FF0000")
 
         let green = SenseHat.Rgb565.green
         XCTAssertEqual(green.value, 0b0000_0111_1110_0000)
         XCTAssertEqual(green.red, 0)
         XCTAssertEqual(green.green, 0b0011_1111)
         XCTAssertEqual(green.blue, 0)
+        XCTAssertEqual(green.rgbHexString, "00FF00")
 
         let blue = SenseHat.Rgb565.blue
         XCTAssertEqual(blue.value, 0b0000_0000_0001_1111)
         XCTAssertEqual(blue.red, 0)
         XCTAssertEqual(blue.green, 0)
         XCTAssertEqual(blue.blue, 0b0001_1111)
+        XCTAssertEqual(blue.rgbHexString, "0000FF")
 
         let white = SenseHat.Rgb565.white
         XCTAssertEqual(white.value, 0xffff)
         XCTAssertEqual(white.red, 0b0001_1111)
         XCTAssertEqual(white.green, 0b0011_1111)
         XCTAssertEqual(white.blue, 0b0001_1111)
+        XCTAssertEqual(white.rgbHexString, "FFFFFF")
 
         let black = SenseHat.Rgb565.black
         XCTAssertEqual(black.value, 0)
         XCTAssertEqual(black.red, 0)
         XCTAssertEqual(black.green, 0)
         XCTAssertEqual(black.blue, 0)
+        XCTAssertEqual(black.rgbHexString, "000000")
 
         let brown = SenseHat.Rgb565.brown
         XCTAssertEqual(brown.value, 0b1001_1011_0010_0110)
@@ -53,18 +58,21 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(cyan.red, 0)
         XCTAssertEqual(cyan.green, 0b0011_1111)
         XCTAssertEqual(cyan.blue, 0b0001_1111)
+        XCTAssertEqual(cyan.rgbHexString, "00FFFF")
 
         let magenta = SenseHat.Rgb565.magenta
         XCTAssertEqual(magenta.value, 0b1111_1000_0001_1111)
         XCTAssertEqual(magenta.red, 0b0001_1111)
         XCTAssertEqual(magenta.green, 0)
         XCTAssertEqual(magenta.blue, 0b0001_1111)
+        XCTAssertEqual(magenta.rgbHexString, "FF00FF")
 
         let yellow = SenseHat.Rgb565.yellow
         XCTAssertEqual(yellow.value, 0b1111_1111_1110_0000)
         XCTAssertEqual(yellow.red, 0b0001_1111)
         XCTAssertEqual(yellow.green, 0b0011_1111)
         XCTAssertEqual(yellow.blue, 0)
+        XCTAssertEqual(yellow.rgbHexString, "FFFF00")
 
         let purple = SenseHat.Rgb565.purple
         XCTAssertEqual(purple.value, 0b1000_0000_0001_0000)
@@ -516,6 +524,7 @@ final class SenseHatTests: XCTestCase {
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),
         ("testRotate90", testRotate90),
+        ("testSyncCalledForSet", testSyncCalledForSet),
     ]
 }
 
