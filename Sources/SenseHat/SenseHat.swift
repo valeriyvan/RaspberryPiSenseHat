@@ -4,10 +4,10 @@
  *  MIT license - see LICENSE.md
  */
 
-#if os(OSX) || os(iOS)
-import Darwin.C
-#else
-import Glibc
+#if os(Linux)
+    import Glibc
+#elseif os(OSX) || os(iOS)
+    import Darwin.C
 #endif
 
 import Foundation
