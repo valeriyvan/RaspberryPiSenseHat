@@ -27,6 +27,7 @@ public class SenseHat {
     private var joystickCallbackDispatchQueue: DispatchQueue?
     private var joystickTimer: DispatchSourceTimer?
     private var joystickFileDescriptor: Int32 = -1
+    private let sync: ((UnsafeMutableBufferPointer<Rgb565>)->Void)?
 
     /// Creates `SenseHat` object representing Raspberry Pi Sense Hat shield.
     /// Tries to open frame buffer file on location `/dev/XXX` where `XXX` is
@@ -41,8 +42,9 @@ public class SenseHat {
     ///  `"/dev/fb0"` or `"/dev/fb1"` depending on setup. Use `nil` to discover
     ///  Sense Hat's frame buffer device but its name `"RPi-Sense FB"`.
     ///   - orientation: Default orientation of LED matrix.
-    public init?(frameBufferDevice: String? = nil, orientation: Orientation = .up) {
+    public init?(frameBufferDevice: String? = nil, orientation: Orientation = .up, sync: ((UnsafeMutableBufferPointer<Rgb565>)->Void)? = nil) {
         self.orientation = orientation
+        self.sync = sync
 
         guard let testDevice = frameBufferDevice, testDevice != "__TEST__" else {
             print("SenseHat is in test mode")
@@ -138,6 +140,7 @@ public class SenseHat {
         for i in frameBufferPointer.indices {
             frameBufferPointer[i] = color
         }
+        sync?(frameBufferPointer)
     }
 
     /// Returns offset of `Rgb565` value in frame buffer of pixel with
@@ -179,6 +182,7 @@ public class SenseHat {
         set {
             precondition(indices ~= x && indices ~= y)
             frameBufferPointer[offset(x: x, y: y)] = newValue
+            sync?(frameBufferPointer)
         }
     }
 
@@ -193,6 +197,7 @@ public class SenseHat {
     public func set(x: Int, y: Int, color: Rgb565) {
         precondition(indices ~= x && indices ~= y)
         frameBufferPointer[offset(x: x, y: y)] = color
+        sync?(frameBufferPointer)
     }
 
     /// Returns color of pixel with coordinates `x` and `y`.
@@ -244,6 +249,7 @@ public class SenseHat {
                 frameBufferPointer[i] = buffer[i]
             }
         }
+        sync?(frameBufferPointer)
     }
 
     /// Draws `character` on LED matrix using `color` and `background` as foreground
@@ -348,6 +354,7 @@ public class SenseHat {
         for y in indices {
             frameBufferPointer[offset(x: indices.last!, y: y)] = column[y]
         }
+        sync?(frameBufferPointer)
     }
 
     /// Shows `string` in LED matrix with animation from right to left with
