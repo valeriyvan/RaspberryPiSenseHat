@@ -23,9 +23,9 @@ public class SenseHat {
     private var fileDescriptor: Int32
     private var frameBufferPointer: UnsafeMutableBufferPointer<Rgb565>
 
-    private var joystickCallback: JoystickCallback?
-    private var joystickCallbackDispatchQueue: DispatchQueue?
-    private var joystickTimer: DispatchSourceTimer?
+//    private var joystickCallback: JoystickCallback?
+//    private var joystickCallbackDispatchQueue: DispatchQueue?
+//    private var joystickTimer: DispatchSourceTimer?
     private var joystickFileDescriptor: Int32 = -1
     private let sync: ((UnsafeMutableBufferPointer<Rgb565>)->Void)?
 
@@ -90,10 +90,10 @@ public class SenseHat {
             frameBufferPointer.deallocate()
         }
 
-        joystickTimer?.suspend()
-        joystickTimer = nil
-        joystickCallback = nil
-        joystickCallbackDispatchQueue = nil
+//        joystickTimer?.suspend()
+//        joystickTimer = nil
+//        joystickCallback = nil
+//        joystickCallbackDispatchQueue = nil
         if joystickFileDescriptor != -1 {
             if close(joystickFileDescriptor) != 0 {
                 print("Error \(errno) closing joystick device file")
@@ -414,29 +414,29 @@ extension SenseHat {
     /// - Returns: True if openning joystick device succeeded, false otherwise.
     ///
     /// TODO: implement device file lookup
-    public func register(device: String = "event0", joystickCallback: @escaping JoystickCallback, joystickCallbackDispatchQueue: DispatchQueue = .global(qos: .background)) -> Bool {
-        self.joystickCallback = joystickCallback
-        self.joystickCallbackDispatchQueue = joystickCallbackDispatchQueue
-        let device = "/dev/input/" + device
-        joystickFileDescriptor = open(device, O_RDONLY | O_NONBLOCK | O_SYNC)
-        guard joystickFileDescriptor > 0 else {
-            print("Cannot open \(device)")
-            return false
-        }
-        startPollingJoystickDeviceFile()
-        return true
-    }
+//    public func register(device: String = "event0", joystickCallback: @escaping JoystickCallback, joystickCallbackDispatchQueue: DispatchQueue = .global(qos: .background)) -> Bool {
+//        self.joystickCallback = joystickCallback
+//        self.joystickCallbackDispatchQueue = joystickCallbackDispatchQueue
+//        let device = "/dev/input/" + device
+//        joystickFileDescriptor = open(device, O_RDONLY | O_NONBLOCK | O_SYNC)
+//        guard joystickFileDescriptor > 0 else {
+//            print("Cannot open \(device)")
+//            return false
+//        }
+//        startPollingJoystickDeviceFile()
+//        return true
+//    }
 
-    private func startPollingJoystickDeviceFile() {
-        let timer = DispatchSource.makeTimerSource(flags: [], queue: .global(qos: .userInteractive))
-        timer.schedule(deadline: .now(), repeating: .milliseconds(10), leeway: .milliseconds(10)) // TODO: parametrize
-        timer.setEventHandler(handler: { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.pollJoystickDeviceFile()
-        })
-        joystickTimer = timer
-        timer.resume()
-    }
+//    private func startPollingJoystickDeviceFile() {
+//        let timer = DispatchSource.makeTimerSource(flags: [], queue: .global(qos: .userInteractive))
+//        timer.schedule(deadline: .now(), repeating: .milliseconds(10), leeway: .milliseconds(10)) // TODO: parametrize
+//        timer.setEventHandler(handler: { [weak self] in
+//            guard let strongSelf = self else { return }
+//            strongSelf.pollJoystickDeviceFile()
+//        })
+//        joystickTimer = timer
+//        timer.resume()
+//    }
 
     // Could be found, e.g. here https://github.com/spotify/linux/blob/master/include/linux/input.h
     private struct input_type {
@@ -452,54 +452,54 @@ extension SenseHat {
         }
     }
 
-    private func pollJoystickDeviceFile() {
-        var pfd = pollfd(fd: joystickFileDescriptor, events: Int16(truncatingIfNeeded:POLLIN), revents: 0)
-        let ready = poll(&pfd, 1, -1 /* timeout in ms TODO: this should correspond with timer somehow */)
-        guard ready > -1 else {
-            print("Joystick device file is not ready")
-            return
-        }
-
-        guard pfd.events > 0 else { /* returned events */
-            print("No events read from Joystick device file")
-            return
-        }
-        let inputSize = MemoryLayout<input_type>.stride // TODO: does it make sense?
-        var inputArray = [Int8](repeating: 0, count: inputSize)
-        let readSize = read(pfd.fd, &inputArray, inputSize)
-        guard readSize == MemoryLayout<input_type>.stride else {
-            print("\(readSize) bytes read from Joystick device file")
-            return
-        }
-        let input = inputArray.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> input_type in
-            ptr.baseAddress!.assumingMemoryBound(to: input_type.self).pointee
-        }
-        guard input.type == 1 else {
-            print("Expected to have type 1 read from Joystick device file, have \(input.type). Input is ignored.")
-            return
-        }
-        guard let button = JoystickButton(rawValue: input.code), let action = JoystickButtonAction(rawValue: input.value) else {
-            print("Unexpected code and/or type read from Joystick device file \(input)")
-            return
-        }
-        joystickCallbackDispatchQueue?.async { [weak self] in
-            self?.joystickCallback?(button, action)
-        }
-    }
+//    private func pollJoystickDeviceFile() {
+//        var pfd = pollfd(fd: joystickFileDescriptor, events: Int16(truncatingIfNeeded:POLLIN), revents: 0)
+//        let ready = poll(&pfd, 1, -1 /* timeout in ms TODO: this should correspond with timer somehow */)
+//        guard ready > -1 else {
+//            print("Joystick device file is not ready")
+//            return
+//        }
+//
+//        guard pfd.events > 0 else { /* returned events */
+//            print("No events read from Joystick device file")
+//            return
+//        }
+//        let inputSize = MemoryLayout<input_type>.stride // TODO: does it make sense?
+//        var inputArray = [Int8](repeating: 0, count: inputSize)
+//        let readSize = read(pfd.fd, &inputArray, inputSize)
+//        guard readSize == MemoryLayout<input_type>.stride else {
+//            print("\(readSize) bytes read from Joystick device file")
+//            return
+//        }
+//        let input = inputArray.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> input_type in
+//            ptr.baseAddress!.assumingMemoryBound(to: input_type.self).pointee
+//        }
+//        guard input.type == 1 else {
+//            print("Expected to have type 1 read from Joystick device file, have \(input.type). Input is ignored.")
+//            return
+//        }
+//        guard let button = JoystickButton(rawValue: input.code), let action = JoystickButtonAction(rawValue: input.value) else {
+//            print("Unexpected code and/or type read from Joystick device file \(input)")
+//            return
+//        }
+//        joystickCallbackDispatchQueue?.async { [weak self] in
+//            self?.joystickCallback?(button, action)
+//        }
+//    }
 
     /// Unregisters joystick callback registered earlier.
-    public func unregisterJoystickCallback() {
-        joystickTimer?.suspend()
-        joystickTimer = nil
-        joystickCallback = nil
-        joystickCallbackDispatchQueue = nil
-        if joystickFileDescriptor != -1 {
-            if close(joystickFileDescriptor) != 0 {
-                print("Error \(errno) closing joystick device file")
-            }
-            joystickFileDescriptor = -1
-        }
-    }
+//    public func unregisterJoystickCallback() {
+//        joystickTimer?.suspend()
+//        joystickTimer = nil
+//        joystickCallback = nil
+//        joystickCallbackDispatchQueue = nil
+//        if joystickFileDescriptor != -1 {
+//            if close(joystickFileDescriptor) != 0 {
+//                print("Error \(errno) closing joystick device file")
+//            }
+//            joystickFileDescriptor = -1
+//        }
+//    }
 
 }
 
