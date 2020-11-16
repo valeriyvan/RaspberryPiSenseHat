@@ -398,29 +398,74 @@ public class SenseHat {
         }
     }
 
-    public func iterate(string: String, color: Rgb565, background: Rgb565 = .black) -> ()->Bool {
-        var it = string.makeIterator()
+    public func iterateColumns(string: String, color: Rgb565, background: Rgb565 = .black) -> ()->Bool {
+        let it = ColumnsIterator(
+            string: string,
+            charGenerator: { [unowned self] c in
+                self.data(character: c, color: color, background: background)
+            },
+            xCount: indices.count,
+            yCount: indices.count
+        )
         return { [weak self] in
             guard let strongSelf = self else { return false }
-            guard let c = it.next() else { return false }
-            let d = strongSelf.data(character: c, color: color, background: background)
-            for x in strongSelf.indices {
-                let row = d.withUnsafeBytes { dPtr -> [Rgb565] in
-                    var row = [Rgb565]()
-                    row.reserveCapacity(strongSelf.indices.count)
-                    for y in strongSelf.indices {
-                        let c = dPtr
-                            .baseAddress!
-                            .advanced(by: strongSelf.offset(x: x, y: y) * MemoryLayout<Rgb565>.stride)
-                            .assumingMemoryBound(to: Rgb565.self)
-                            .pointee
-                        row.append(c)
-                    }
-                    return row
-                }
-                strongSelf.shiftLeft(addingColumn: row)
-            }
+            guard let column = it.next() else { return false }
+            strongSelf.shiftLeft(addingColumn: column)
             return true
+        }
+    }
+}
+
+class ColumnsIterator: IteratorProtocol {
+    private let string: String
+    private var stringIterator: String.Iterator
+    private var x = 0
+    private var charData: Data? // Pixel data of character string[index]
+    private let charGenerator: (Character) -> Data
+    private let xCount: Int
+    private let yCount: Int
+    private var completed = false
+
+    init(string: String, charGenerator: @escaping (Character) -> Data, xCount: Int, yCount: Int) {
+        self.string = string
+        self.stringIterator = string.makeIterator()
+        self.charGenerator = charGenerator
+        self.xCount = xCount
+        self.yCount = yCount
+    }
+
+    func next() -> [SenseHat.Rgb565]? {
+        guard !completed else { return nil }
+        if charData == nil {
+            guard let char = stringIterator.next() else { return nil }
+            assert(x == 0)
+            charData = charGenerator(char)
+        }
+        defer {
+            if x == xCount {
+                x = 0
+                if let char = stringIterator.next() {
+                    charData = charGenerator(char)
+                } else {
+                    charData = nil
+                    completed = true
+                }
+            } else {
+                x += 1
+            }
+        }
+        return charData!.withUnsafeBytes { dPtr -> [SenseHat.Rgb565] in
+            var row = [SenseHat.Rgb565]()
+            row.reserveCapacity(yCount)
+            for y in 0..<yCount {
+                let c = dPtr
+                    .baseAddress!
+                    .advanced(by: (y * xCount + x) * MemoryLayout<SenseHat.Rgb565>.stride)
+                    .assumingMemoryBound(to: SenseHat.Rgb565.self)
+                    .pointee
+                row.append(c)
+            }
+            return row
         }
     }
 }
