@@ -11,7 +11,6 @@ let package = Package(
         .executable(name: "Snake", targets: ["Snake"]),
         .executable(name: "Life", targets: ["Life"]),
         .executable(name: "Sensors", targets: ["Sensors"]),
-        .executable(name: "Runner", targets: ["Runner"]),
 
     ],
     dependencies: [],
@@ -22,7 +21,6 @@ let package = Package(
         .target(name: "Snake", dependencies: ["SenseHat"]),
         .target(name: "Life", dependencies: ["SenseHat"]),
         .target(name: "Sensors", dependencies: ["SenseHat"]),
-        .target(name: "Runner", dependencies: ["SenseHat"]),
         .testTarget(name: "SenseHatTests", dependencies: ["SenseHat"]),
     ]
 )
