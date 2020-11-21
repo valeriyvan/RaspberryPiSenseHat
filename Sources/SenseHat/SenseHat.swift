@@ -416,7 +416,8 @@ public class SenseHat {
     }
 }
 
-class ColumnsIterator: IteratorProtocol {
+// Public to make it testable
+public class ColumnsIterator: IteratorProtocol {
     private let string: String
     private var stringIterator: String.Iterator
     private var x = 0
@@ -434,7 +435,7 @@ class ColumnsIterator: IteratorProtocol {
         self.yCount = yCount
     }
 
-    func next() -> [SenseHat.Rgb565]? {
+    public func next() -> [SenseHat.Rgb565]? {
         guard !completed else { return nil }
         if charData == nil {
             guard let char = stringIterator.next() else { return nil }

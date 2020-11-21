@@ -502,6 +502,34 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(counter, 1)
     }
 
+    func testColumtsIterator() {
+//        var counter = 0
+//        func sync(_ frameBuffer: UnsafeMutableBufferPointer<SenseHat.Rgb565>) {
+//            counter += 1
+//        }
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        let d0 = senseHat.data()
+        let d1 = senseHat.data(character: "*", color: .yellow, background: .blue)
+        let d = [d1]
+        let it = ColumnsIterator(
+            string: "*",
+            charGenerator: { c in
+                senseHat.data(character: c, color: .yellow, background: .blue)
+            },
+            xCount: senseHat.indices.count,
+            yCount: senseHat.indices.count
+        )
+        var counter = 0
+        while let column = it.next() {
+            print(counter)
+            let (charIndex, columnIndex) = counter.quotientAndRemainder(dividingBy: senseHat.indices.count)
+            let columnSample = d[charIndex].column(columnIndex)
+            XCTAssertEqual(column, columnSample)
+            counter += 1
+        }
+        XCTAssertEqual(counter, senseHat.indices.count + 1)
+    }
+
     static var allTests = [
         ("testRgb565", testRgb565),
         ("testSetGetPixelColorUp", testSetGetPixelColorUp),
@@ -551,3 +579,17 @@ private extension Data {
     }
 }
 
+private extension Data {
+    func column(_ x: Int) -> [SenseHat.Rgb565] {
+        return withUnsafeBytes { (bufferPointer: UnsafeRawBufferPointer) -> [SenseHat.Rgb565] in
+            let start = bufferPointer.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let buffer = UnsafeBufferPointer(start: start, count: 64)
+            var ret = [SenseHat.Rgb565]()
+            for y in 0..<8 {
+                let pixel = buffer[y * 8 + x]
+                ret.append(pixel)
+            }
+            return ret
+        }
+    }
+}
