@@ -45,7 +45,8 @@ Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn'
 * [Getting started with the Sense HAT](https://projects.raspberrypi.org/en/projects/getting-started-with-the-sense-hat);
 * Rust library [sensehat-screen](https://docs.rs/sensehat-screen/) where it's expained how RGB is packed in two bytes in so called `Rgb565`;
 * Linux [The Frame Buffer Device API](https://www.kernel.org/doc/Documentation/fb/api.txt) used to access pixel buffer;
-* Guide to install Swift on Raspberry Pi [buildSwiftOnARM](https://github.com/uraimo/buildSwiftOnARM) used to install prebuilt Swift 5.1.5 TODO: describe what I've done differently.
+* Guide to install Swift on Raspberry Pi [buildSwiftOnARM](https://github.com/uraimo/buildSwiftOnARM) used to install prebuilt Swift 5.1.5 TODO: describe what I've done differently;
+* [3D printing Astro Pi case](https://all3dp.com/astro-pi-3d-print-flight-case/).
 
 ![Blinking](https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/IMG_3369_480.mov "Blinking")
 
