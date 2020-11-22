@@ -26,7 +26,7 @@ extension SenseHat {
         public let T_DegC: Double
     }
 
-    public func pressure() -> Pressure? {
+    public func pressure(logRawReadings: Bool = false) -> Pressure? {
         let DEV_ID: Int32 = 0x5c
         let DEV_PATH = "/dev/i2c-1"
         let WHO_AM_I: UInt8 = 0x0F
@@ -77,20 +77,30 @@ extension SenseHat {
         // TODO: limit iterations
         var counter = 0
         while true {
-            print("Loop \(counter)")
+            if logRawReadings {
+                print("Loop \(counter)")
+            }
             counter += 1
             usleep(25_000) // 25 milliseconds
             guard let status = i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) else {
-                print("nil, continue")
-                continue }
+                if logRawReadings {
+                    print("nil returned from i2c_smbus_read_byte_data, continue")
+                }
+                continue
+            }
             guard status != 0 else { break }
             print(status)
-            print("status != 0, continue")
+            if logRawReadings {
+                print("status \(status) != 0, continue")
+            }
         }
 
         // Read the temperature measurement (2 bytes to read).
         let temp_out_l = i2c_smbus_read_byte_data(fileDescriptor, command: TEMP_OUT_L)
         let temp_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: TEMP_OUT_H)
+        if logRawReadings {
+            print("temp_out_l = \(temp_out_l!), temp_out_h = \(temp_out_h!)")
+        }
 
         // Read the pressure measurement (3 bytes to read)
         let press_out_xl = i2c_smbus_read_byte_data(fileDescriptor, command: PRESS_OUT_XL)
@@ -98,17 +108,25 @@ extension SenseHat {
         let press_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: PRESS_OUT_H)
 
         // Temperature output is signed number despite it isn't clearly stated in sensor datasheet.
-        print("temp_out_l = \(temp_out_l!), temp_out_h = \(temp_out_h!)")
         let temp_out = (Int16(temp_out_h!) << 8) | Int16(temp_out_l!)
-        print("temp_out = \(temp_out)")
+        if logRawReadings {
+            print("temp_out = \(temp_out)")
+        }
         let press_out = (Int(press_out_h!) << 16) | (Int(press_out_l!) << 8) | Int(press_out_xl!)
+        if logRawReadings {
+            print("press_out = \(press_out)")
+        }
 
         // Calculate output values
         let T_DegC = 42.5 + (Double(temp_out) / 480.0)
-        print("T_DegC = \(T_DegC)")
+        if logRawReadings {
+            print("T_DegC = \(T_DegC)")
+        }
         let P_hPa = Double(press_out) / 4096.0
-        print("P_hPa = \(P_hPa)")
-        
+        if logRawReadings {
+            print("P_hPa = \(P_hPa)")
+        }
+
         // Power down the device.
         _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x00)
 

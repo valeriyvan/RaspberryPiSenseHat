@@ -26,7 +26,7 @@ extension SenseHat {
         public let T_DegC: Double
     }
 
-    public func humidity() -> Humidity? {
+    public func humidity(logRawReadings: Bool = false) -> Humidity? {
         let DEV_PATH = "/dev/i2c-1"
         let DEV_ID: CInt = 0x5F
         let WHO_AM_I: UInt8 = 0x0F
@@ -94,15 +94,21 @@ extension SenseHat {
         // TODO: limit iterations
         var counter = 0
         while true {
-            print("Loop \(counter)")
+            if logRawReadings {
+                print("Loop \(counter)")
+            }
             counter += 1
             usleep(25_000) // 25 milliseconds
             guard let status = i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) else {
-                print("nil, continue")
-                continue }
+                if logRawReadings {
+                    print("nil returned from i2c_smbus_read_byte_data, continue")
+                }
+                continue
+            }
             guard status != 0 else { break }
-            print(status)
-            print("status != 0, continue")
+            if logRawReadings {
+                print("status \(status) != 0, continue")
+            }
         }
 
         // Read calibration temperature LSB (ADC) data (temperature calibration
