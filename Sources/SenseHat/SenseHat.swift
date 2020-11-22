@@ -115,6 +115,7 @@ public class SenseHat {
             guard !isDirectory else { continue }
             guard device.hasPrefix("fb") else { continue }
             let name = fileURL.appendingPathComponent("name")
+            // Device name ends with \n. So we have or trim whitespaces or compare prefix.
             guard let deviceName = try? String(contentsOf: name),
                   deviceName.trimmingCharacters(in: .whitespacesAndNewlines) == "RPi-Sense FB"
                 else { continue }

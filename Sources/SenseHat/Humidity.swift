@@ -12,12 +12,12 @@
 
 import Foundation
 
-internal let I2C_SMBUS_READ: UInt8 =   1
-internal let I2C_SMBUS_WRITE: UInt8 =  0
-internal let I2C_SMBUS_BYTE_DATA: Int32 = 2
-internal let I2C_SLAVE: UInt = 0x703
-internal let I2C_SMBUS: UInt = 0x720
-internal let I2C_DEFAULT_PAYLOAD_LENGTH: Int = 32
+private let I2C_SMBUS_READ: UInt8 =   1
+private let I2C_SMBUS_WRITE: UInt8 =  0
+private let I2C_SMBUS_BYTE_DATA: Int32 = 2
+private let I2C_SLAVE: UInt = 0x703
+private let I2C_SMBUS: UInt = 0x720
+private let I2C_DEFAULT_PAYLOAD_LENGTH: Int = 32
 
 extension SenseHat {
 
@@ -56,7 +56,7 @@ extension SenseHat {
         let H_T_OUT_H: UInt8 = 0x29
 
         // Open i2c device.
-        let fileDescriptor = open(DEV_PATH, O_RDWR)
+        let fileDescriptor: CInt = open(DEV_PATH, O_RDWR)
         guard fileDescriptor >= 0 else {
             print("Error \(errno) openning i2c device.")
             return nil
@@ -91,9 +91,19 @@ extension SenseHat {
         _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG2, value: 0x01)
 
         // Wait until the measurement is completed.
-        repeat {
-            usleep(25_000) /* 25 milliseconds */
-        } while i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) == nil
+        // TODO: limit iterations
+        var counter = 0
+        while true {
+            print("Loop \(counter)")
+            counter += 1
+            usleep(25_000) // 25 milliseconds
+            guard let status = i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) else {
+                print("nil, continue")
+                continue }
+            guard status != 0 else { break }
+            print(status)
+            print("status != 0, continue")
+        }
 
         // Read calibration temperature LSB (ADC) data (temperature calibration
         // x-data for two points)
@@ -120,16 +130,16 @@ extension SenseHat {
         let h1_rh_x2 = i2c_smbus_read_byte_data(fileDescriptor, command: H1_rH_x2)
 
         // Make 16 bit values (bit shift) (temperature calibration x-values).
-        let T0_OUT = t0_out_h! << 8 | t0_out_l!
-        let T1_OUT = t1_out_h! << 8 | t1_out_l!
+        let T0_OUT = Int16(t0_out_h!) << 8 | Int16(t0_out_l!)
+        let T1_OUT = Int16(t1_out_h!) << 8 | Int16(t1_out_l!)
 
         // Make 16 bit values (bit shift) (humidity calibration x-values).
-        let H0_T0_OUT = h0_out_h! << 8 | h0_out_l!
-        let H1_T0_OUT = h1_out_h! << 8 | h1_out_l!
+        let H0_T0_OUT = Int16(h0_out_h!) << 8 | Int16(h0_out_l!)
+        let H1_T0_OUT = Int16(h1_out_h!) << 8 | Int16(h1_out_l!)
 
         // Make 16 and 10 bit values (bit mask and bit shift).
-        let T0_DegC_x8 = (t1_t0_msb! & 3) << 8 | t0_degC_x8!
-        let T1_DegC_x8 = ((t1_t0_msb! & 12) >> 2) << 8 | t1_degC_x8!
+        let T0_DegC_x8 = Int16(t1_t0_msb! & 3) << 8 | Int16(t0_degC_x8!)
+        let T1_DegC_x8 = Int16((t1_t0_msb! & 12) >> 2) << 8 | Int16(t1_degC_x8!)
 
         // Calculate calibration values (temperature calibration y-values).
         let T0_DegC = Double(T0_DegC_x8) / 8.0
@@ -152,14 +162,14 @@ extension SenseHat {
         let t_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: TEMP_OUT_H)
 
         // Make 16 bit value.
-        let T_OUT = t_out_h! << 8 | t_out_l!
+        let T_OUT = Int16(t_out_h!) << 8 | Int16(t_out_l!)
 
-        // Read the ambient humidity measurement (2 bytes to read) */
+        // Read the ambient humidity measurement (2 bytes to read)
         let h_t_out_l = i2c_smbus_read_byte_data(fileDescriptor, command: H_T_OUT_L)
         let h_t_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: H_T_OUT_H)
 
         // Make 16 bit value.
-        let H_T_OUT = h_t_out_h! << 8 | h_t_out_l!
+        let H_T_OUT = Int16(h_t_out_h!) << 8 | Int16(h_t_out_l!)
 
         // Calculate ambient temperature.
         let T_DegC = (t_gradient_m * Double(T_OUT)) + t_intercept_c;
