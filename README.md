@@ -17,7 +17,7 @@ Features:
 * ✅ rotating of LED matrix 0º/90º/180º/270º;
 * ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 * ✅ read joystick;
-* ✅ read humidity sensor;
+* ✅ read humidity and pressure sensors;
 * ✅ snake game;
 * ✅ [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 
