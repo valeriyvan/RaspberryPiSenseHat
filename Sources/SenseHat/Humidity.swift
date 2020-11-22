@@ -21,12 +21,12 @@ private let I2C_DEFAULT_PAYLOAD_LENGTH: Int = 32
 
 extension SenseHat {
 
-    public struct AmbientHumidity {
+    public struct Humidity {
         public let H_rH: Double
         public let T_DegC: Double
     }
 
-    public func ambientHumidity() -> AmbientHumidity? {
+    public func humidity() -> Humidity? {
         let DEV_PATH = "/dev/i2c-1"
         let DEV_ID: CInt = 0x5F
         let WHO_AM_I: UInt8 = 0x0F
@@ -180,7 +180,7 @@ extension SenseHat {
         // Power down the device.
         _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x00)
 
-        return AmbientHumidity(H_rH: H_rH, T_DegC: T_DegC)
+        return Humidity(H_rH: H_rH, T_DegC: T_DegC)
     }
 
     private struct i2c_smbus_ioctl_data {

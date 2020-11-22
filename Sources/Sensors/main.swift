@@ -20,7 +20,7 @@ print("Started")
 
 for _ in 0..<1000 {
     print("Reading humidity sensor")
-    let h = senseHat.ambientHumidity()!
+    let h = senseHat.humidity()!
     let strH = String(format: "%.1lf", h.H_rH)
     let strT = String(format: "%.1lf", h.T_DegC)
     let msgH = "Humidity \(strH)% rH "
