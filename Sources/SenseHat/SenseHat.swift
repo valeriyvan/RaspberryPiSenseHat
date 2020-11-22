@@ -39,12 +39,12 @@ public class SenseHat {
     /// - Parameters:
     ///   - frameBufferDevice: Name of frame buffer device file. Usually it's
     ///  `"/dev/fb0"` or `"/dev/fb1"` depending on setup. Use `nil` to discover
-    ///  Sense Hat's frame buffer device but its name `"RPi-Sense FB"`.
+    ///  Sense Hat's frame buffer device by its name `"RPi-Sense FB"`.
     ///   - orientation: Default orientation of LED matrix.
     public init?(frameBufferDevice: String? = nil, orientation: Orientation = .up) {
         self.orientation = orientation
 
-        guard let testDevice = frameBufferDevice, testDevice != "__TEST__" else {
+        if frameBufferDevice != nil && frameBufferDevice! == "__TEST__" {
             print("SenseHat is in test mode")
             fileDescriptor = -1
             frameBufferPointer = UnsafeMutableBufferPointer<Rgb565>
@@ -53,12 +53,17 @@ public class SenseHat {
             return
         }
 
-        guard let device = SenseHat.frameBufferDevice() else {
-            print("Cannot discover frame buffer device with name RPi-Sense FB", to: &standardError)
-            return nil
+        var frameBufferDevice = frameBufferDevice
+
+        if frameBufferDevice == nil {
+            guard let discoveredFrameBufferDevice = Self.frameBufferDevice() else {
+                print("Cannot discover frame buffer device with name RPi-Sense FB", to: &standardError)
+                return nil
+            }
+            frameBufferDevice = discoveredFrameBufferDevice
         }
 
-        fileDescriptor = open(device, O_RDWR | O_SYNC)
+        fileDescriptor = open(frameBufferDevice!, O_RDWR | O_SYNC)
         guard fileDescriptor >= 0 else {
             print("Error \(errno) openning framebuffer device.", to: &standardError)
             return nil
