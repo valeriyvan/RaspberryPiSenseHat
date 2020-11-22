@@ -54,18 +54,18 @@ public class SenseHat {
         }
 
         guard let device = SenseHat.frameBufferDevice() else {
-            print("Cannot discover frame buffer device with name RPi-Sense FB")
+            print("Cannot discover frame buffer device with name RPi-Sense FB", to: &standardError)
             return nil
         }
 
         fileDescriptor = open(device, O_RDWR | O_SYNC)
         guard fileDescriptor >= 0 else {
-            print("Error \(errno) openning framebuffer device.")
+            print("Error \(errno) openning framebuffer device.", to: &standardError)
             return nil
         }
 
         guard let fb = mmap(nil, 128, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0) else {
-            print("Cannot map framebuffer device.")
+            print("Cannot map framebuffer device.", to: &standardError)
             return nil
         }
 
@@ -78,11 +78,11 @@ public class SenseHat {
     deinit {
         if fileDescriptor != -1 { // skip in tests
             if munmap(frameBufferPointer.baseAddress!, 128) != 0 {
-                print("Cannot unmap framebuffer device.")
+                print("Cannot unmap framebuffer device.", to: &standardError)
             }
 
             if close(fileDescriptor) != 0 {
-                print("Error \(errno) closing framebuffer device.")
+                print("Error \(errno) closing framebuffer device.", to: &standardError)
             }
         } else {
             frameBufferPointer.deallocate()
@@ -94,7 +94,7 @@ public class SenseHat {
         joystickCallbackDispatchQueue = nil
         if joystickFileDescriptor != -1 {
             if close(joystickFileDescriptor) != 0 {
-                print("Error \(errno) closing joystick device file")
+                print("Error \(errno) closing joystick device file", to: &standardError)
             }
         }
 
@@ -273,7 +273,8 @@ public class SenseHat {
             print("""
                 Character \(character) consists of \(character.unicodeScalars.count) unicode scalars.
                 Only the first one will be shown.
-                """
+                """,
+                to: &standardError
             )
         }
         let unicodeCodePoint = character.unicodeScalars.first!.value
@@ -414,7 +415,7 @@ extension SenseHat {
         let device = "/dev/input/" + device
         joystickFileDescriptor = open(device, O_RDONLY | O_NONBLOCK | O_SYNC)
         guard joystickFileDescriptor > 0 else {
-            print("Cannot open \(device)")
+            print("Cannot open \(device)", to: &standardError)
             return false
         }
         startPollingJoystickDeviceFile()
@@ -450,30 +451,30 @@ extension SenseHat {
         var pfd = pollfd(fd: joystickFileDescriptor, events: Int16(truncatingIfNeeded:POLLIN), revents: 0)
         let ready = poll(&pfd, 1, -1 /* timeout in ms TODO: this should correspond with timer somehow */)
         guard ready > -1 else {
-            print("Joystick device file is not ready")
+            print("Joystick device file is not ready", to: &standardError)
             return
         }
 
         guard pfd.events > 0 else { /* returned events */
-            print("No events read from Joystick device file")
+            print("No events read from Joystick device file", to: &standardError)
             return
         }
         let inputSize = MemoryLayout<input_type>.stride // TODO: does it make sense?
         var inputArray = [Int8](repeating: 0, count: inputSize)
         let readSize = read(pfd.fd, &inputArray, inputSize)
         guard readSize == MemoryLayout<input_type>.stride else {
-            print("\(readSize) bytes read from Joystick device file")
+            print("\(readSize) bytes read from Joystick device file", to: &standardError)
             return
         }
         let input = inputArray.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> input_type in
             ptr.baseAddress!.assumingMemoryBound(to: input_type.self).pointee
         }
         guard input.type == 1 else {
-            print("Expected to have type 1 read from Joystick device file, have \(input.type). Input is ignored.")
+            print("Expected to have type 1 read from Joystick device file, have \(input.type). Input is ignored.", to: &standardError)
             return
         }
         guard let button = JoystickButton(rawValue: input.code), let action = JoystickButtonAction(rawValue: input.value) else {
-            print("Unexpected code and/or type read from Joystick device file \(input)")
+            print("Unexpected code and/or type read from Joystick device file \(input)", to: &standardError)
             return
         }
         joystickCallbackDispatchQueue?.async { [weak self] in
@@ -489,7 +490,7 @@ extension SenseHat {
         joystickCallbackDispatchQueue = nil
         if joystickFileDescriptor != -1 {
             if close(joystickFileDescriptor) != 0 {
-                print("Error \(errno) closing joystick device file")
+                print("Error \(errno) closing joystick device file", to: &standardError)
             }
             joystickFileDescriptor = -1
         }

@@ -41,25 +41,25 @@ extension SenseHat {
         // Open i2c device.
         let fileDescriptor: Int32 = open(DEV_PATH, O_RDWR)
         guard fileDescriptor >= 0 else {
-            print("Error \(errno) openning i2c device.")
+            print("Error \(errno) openning i2c device.", to: &standardError)
             return nil
         }
 
         defer {
             if close(fileDescriptor) != 0 {
-                print("Error \(errno) closing i2c slave device.")
+                print("Error \(errno) closing i2c slave device.", to: &standardError)
             }
         }
 
         // Configure i2c slave.
         guard ioctl(fileDescriptor, I2C_SLAVE, DEV_ID) != -1 else {
-            print("Error \(errno) configuring i2c device as slave.")
+            print("Error \(errno) configuring i2c device as slave.", to: &standardError)
             return nil
         }
 
         // Check we are who we should be.
         guard i2c_smbus_read_byte_data(fileDescriptor, command: WHO_AM_I) == 0xBD else {
-            print("who_am_i error")
+            print("who_am_i error", to: &standardError)
             return nil
         }
 
