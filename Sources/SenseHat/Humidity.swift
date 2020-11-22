@@ -208,5 +208,4 @@ extension SenseHat {
         return smbus_ioctl(fd, rw: I2C_SMBUS_WRITE, command: command, size: I2C_SMBUS_BYTE_DATA, data: &data)
     }
 
-
 }
