@@ -27,12 +27,9 @@ extension SenseHat {
     }
 
     public func humidity(logRawReadings: Bool = false) -> Humidity? {
-        let DEV_PATH = "/dev/i2c-1"
         let DEV_ID: CInt = 0x5F
-        let WHO_AM_I: UInt8 = 0x0F
 
         let CTRL_REG1: UInt8 = 0x20
-        let CTRL_REG2: UInt8 = 0x21
 
         let T0_OUT_L: UInt8 = 0x3C
         let T0_OUT_H: UInt8 = 0x3D
@@ -56,9 +53,7 @@ extension SenseHat {
         let H_T_OUT_H: UInt8 = 0x29
 
         // Open i2c device.
-        let fileDescriptor: CInt = open(DEV_PATH, O_RDWR)
-        guard fileDescriptor >= 0 else {
-            print("Error \(errno) openning i2c device.", to: &standardError)
+        guard let fileDescriptor = openIC2(sensor: 0x84, devId: DEV_ID, whoAmI: 0xBC)else {
             return nil
         }
 
@@ -68,48 +63,7 @@ extension SenseHat {
             }
         }
 
-        // Configure i2c slave.
-        guard ioctl(fileDescriptor, I2C_SLAVE, DEV_ID) != -1 else {
-            print("Error \(errno) configuring i2c device as slave.", to: &standardError)
-            return nil
-        }
-
-        // Check we are who we should be.
-        guard i2c_smbus_read_byte_data(fileDescriptor, command: WHO_AM_I) == 0xBC else {
-            print("who_am_i error", to: &standardError)
-            return nil
-        }
-
-        // Power down the device (clean start).
-        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x00)
-
-        // Turn on the humidity sensor analog front end in single shot mode.
-        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x84)
-
-        // Run one-shot measurement (temperature and humidity).
-        // The set bit will be reset by the sensor itself after execution (self-clearing bit).
-        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG2, value: 0x01)
-
-        // Wait until the measurement is completed.
-        // TODO: limit iterations
-        var counter = 0
-        while true {
-            if logRawReadings {
-                print("Loop \(counter)")
-            }
-            counter += 1
-            usleep(25_000) // 25 milliseconds
-            guard let status = i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) else {
-                if logRawReadings {
-                    print("nil returned from i2c_smbus_read_byte_data, continue")
-                }
-                continue
-            }
-            guard status != 0 else { break }
-            if logRawReadings {
-                print("status \(status) != 0, continue")
-            }
-        }
+        waitUntilMeasurementIsComplete(fileDescriptor: fileDescriptor, logRawReadings: logRawReadings)
 
         // Read calibration temperature LSB (ADC) data (temperature calibration
         // x-data for two points)
@@ -188,6 +142,141 @@ extension SenseHat {
 
         return Humidity(H_rH: H_rH, T_DegC: T_DegC)
     }
+
+    public struct Pressure {
+        public let P_hPa: Double
+        public let T_DegC: Double
+    }
+
+    public func pressure(logRawReadings: Bool = false) -> Pressure? {
+        let DEV_ID: Int32 = 0x5c
+
+        let CTRL_REG1: UInt8 = 0x20
+
+        let PRESS_OUT_XL: UInt8 = 0x28
+        let PRESS_OUT_L: UInt8 = 0x29
+        let PRESS_OUT_H: UInt8 = 0x2A
+        let TEMP_OUT_L: UInt8 = 0x2B
+        let TEMP_OUT_H: UInt8 = 0x2C
+
+        guard let fileDescriptor = openIC2(sensor: 0x84, devId: DEV_ID, whoAmI: 0xBD)else {
+            return nil
+        }
+
+        defer {
+            if close(fileDescriptor) != 0 {
+                print("Error \(errno) closing i2c slave device.", to: &standardError)
+            }
+        }
+
+        waitUntilMeasurementIsComplete(fileDescriptor: fileDescriptor, logRawReadings: logRawReadings)
+
+        // Read the temperature measurement (2 bytes to read).
+        let temp_out_l = i2c_smbus_read_byte_data(fileDescriptor, command: TEMP_OUT_L)
+        let temp_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: TEMP_OUT_H)
+        if logRawReadings {
+            print("temp_out_l = \(temp_out_l!), temp_out_h = \(temp_out_h!)")
+        }
+
+        // Read the pressure measurement (3 bytes to read)
+        let press_out_xl = i2c_smbus_read_byte_data(fileDescriptor, command: PRESS_OUT_XL)
+        let press_out_l = i2c_smbus_read_byte_data(fileDescriptor, command: PRESS_OUT_L)
+        let press_out_h = i2c_smbus_read_byte_data(fileDescriptor, command: PRESS_OUT_H)
+
+        // Temperature output is signed number despite it isn't clearly stated in sensor datasheet.
+        let temp_out = (Int16(temp_out_h!) << 8) | Int16(temp_out_l!)
+        if logRawReadings {
+            print("temp_out = \(temp_out)")
+        }
+        let press_out = (Int(press_out_h!) << 16) | (Int(press_out_l!) << 8) | Int(press_out_xl!)
+        if logRawReadings {
+            print("press_out = \(press_out)")
+        }
+
+        // Calculate output values
+        let T_DegC = 42.5 + (Double(temp_out) / 480.0)
+        if logRawReadings {
+            print("T_DegC = \(T_DegC)")
+        }
+        let P_hPa = Double(press_out) / 4096.0
+        if logRawReadings {
+            print("P_hPa = \(P_hPa)")
+        }
+
+        // Power down the device.
+        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x00)
+
+        return Pressure(P_hPa: P_hPa, T_DegC: T_DegC)
+    }
+
+    private func openIC2(sensor: UInt8, devId: Int32, whoAmI: UInt8) -> CInt? {
+        let DEV_PATH = "/dev/i2c-1"
+        let WHO_AM_I: UInt8 = 0x0F
+
+        let CTRL_REG1: UInt8 = 0x20
+        let CTRL_REG2: UInt8 = 0x21
+
+        // Open i2c device.
+        let fileDescriptor: CInt = open(DEV_PATH, O_RDWR)
+        guard fileDescriptor >= 0 else {
+            print("Error \(errno) openning i2c device.", to: &standardError)
+            return nil
+        }
+
+        // Configure i2c slave.
+        guard ioctl(fileDescriptor, I2C_SLAVE, devId) != -1 else {
+            print("Error \(errno) configuring i2c device as slave.", to: &standardError)
+            if close(fileDescriptor) != 0 {
+                print("Error \(errno) closing i2c slave device.", to: &standardError)
+            }
+            return nil
+        }
+
+        // Check we are who we should be.
+        guard i2c_smbus_read_byte_data(fileDescriptor, command: WHO_AM_I) == whoAmI else {
+            print("who_am_i error", to: &standardError)
+            if close(fileDescriptor) != 0 {
+                print("Error \(errno) closing i2c slave device.", to: &standardError)
+            }
+            return nil
+        }
+
+        // Power down the device (clean start).
+        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: 0x00)
+
+        // Turn on the humidity sensor analog front end in single shot mode.
+        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG1, value: sensor)
+
+        // Run one-shot measurement.
+        // The set bit will be reset by the sensor itself after execution (self-clearing bit).
+        _ = i2c_smbus_write_byte_data(fileDescriptor, command: CTRL_REG2, value: 0x01)
+
+        return fileDescriptor
+    }
+
+    private func waitUntilMeasurementIsComplete(fileDescriptor: CInt, logRawReadings: Bool) {
+        let CTRL_REG2: UInt8 = 0x21
+        // TODO: limit iterations
+        var counter = 0
+        while true {
+            if logRawReadings {
+                print("Loop \(counter)")
+            }
+            counter += 1
+            usleep(25_000) // 25 milliseconds
+            guard let status = i2c_smbus_read_byte_data(fileDescriptor, command: CTRL_REG2) else {
+                if logRawReadings {
+                    print("nil returned from i2c_smbus_read_byte_data, continue")
+                }
+                continue
+            }
+            guard status != 0 else { break }
+            if logRawReadings {
+                print("status \(status) != 0, continue")
+            }
+        }
+    }
+
 
     private struct i2c_smbus_ioctl_data {
         var read_write: UInt8
