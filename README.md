@@ -66,6 +66,7 @@ senseHat.set(color: .black) // clear
 senseHat.set(x: 0, y: 0, color: .white) // set most top left LED to white using function syntax
 senseHat[7, 7] = .green // set most bottom right LED to green using subscript syntax
 ```
+![White and green]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/white-green.png "White and green")
 
 Show character on LED matrix:
 
