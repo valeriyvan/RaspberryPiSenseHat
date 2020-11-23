@@ -25,6 +25,7 @@ TODO:
 * read accelerometer/gyro/magnitometer sensors;
 * release first version;
 * add example snippets to this README;
+* add conversion of RGB color to Rgb565;
 * add cyrillic font 8x8;
 * add 3x5 font;
 * replace C fonts with Swift ones;
@@ -34,6 +35,49 @@ TODO:
 * mode for rotating screen depending on gyro readings;
 * emulator of SenseHat LED matrix for Web;
 * Kalman filtering for accelerometer/gyro/magnitometer.
+
+# Usage
+
+Instantiating `SenseHat`:
+
+``` Swift
+// Look over all frame buffer devices in `/dev/` for one of Sense Hat. 
+// Use default orientation `.up`
+guard let senseHat = SenseHat() else {
+    fatalError("Can't initialise Raspberry Pi Sense Hat")
+}
+```
+Parameter `orientation` could be used for other orientations" `SenseHat(orientation: .left)`.
+Parameter `frameBufferDevice` could be use for specific frame buffer device: `SenseHat(frameBufferDevice: "/dev/fb0")`.
+Both parameters could be used:  `SenseHat(frameBufferDevice: "/dev/fb0", orientation: .down)`.
+
+Set all LEDs of matrix to specific color (`'black` color could be used for turning LEDs off):
+
+``` Swift
+senseHat.set(color: .red)
+```
+
+Set specific LED of matrix to specific color (x and y coordinate should belong to `0..<7` range):
+
+``` Swift
+senseHat.set(color: .black) // clear
+senseHat.set(x: 0, y: 0, color: .white) // set most top left LED to white using function call syntax
+senseHat[7, 7] = .green // set most bottom right LED to green using subscript syntax
+```
+
+Show character on LED matrix:
+
+``` Swift
+senseHat.show(character: Character("A"), color: .blue)
+```
+
+Show string on LED matrix:
+
+``` Swift
+senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .black)
+```
+
+# Useful links
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
 
