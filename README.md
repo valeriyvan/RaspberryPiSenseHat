@@ -57,11 +57,13 @@ Set all LEDs of matrix to specific color (`'black` color could be used for turni
 senseHat.set(color: .red)
 ```
 
+![Red]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/red.png "Red")
+
 Set specific LED of matrix to specific color (x and y coordinate should belong to `0..<7` range):
 
 ``` Swift
 senseHat.set(color: .black) // clear
-senseHat.set(x: 0, y: 0, color: .white) // set most top left LED to white using function call syntax
+senseHat.set(x: 0, y: 0, color: .white) // set most top left LED to white using function syntax
 senseHat[7, 7] = .green // set most bottom right LED to green using subscript syntax
 ```
 
