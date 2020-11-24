@@ -38,7 +38,7 @@ TODO:
 
 # Usage
 
-Instantiating `SenseHat`:
+## Instantiating
 
 ``` Swift
 // Look over all frame buffer devices in `/dev/` for one of Sense Hat. 
@@ -51,16 +51,21 @@ Parameter `orientation` could be used for other orientations" `SenseHat(orientat
 Parameter `frameBufferDevice` could be use for specific frame buffer device: `SenseHat(frameBufferDevice: "/dev/fb0")`.
 Both parameters could be used:  `SenseHat(frameBufferDevice: "/dev/fb0", orientation: .down)`.
 
-Set all LEDs of matrix to specific color (`.black` color could be used for turning LEDs off):
+## Set all LEDs of matrix to specific color 
 
 ``` Swift
-senseHat.set(color: .red)
+senseHat.set(color: .red) // sets all LEDs of matrix to red
 ```
 
 ![Red]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/red.png "Red")
 
-Set specific LED of matrix to specific color (x and y coordinate should belong to `0..<7` range):
+``` Swift
+senseHat.set(color: .black) // sets all LEDs of matrix to black, literally turns them off
+```
 
+![Black]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/black.png "Black")
+
+## Set specific LED of matrix to specific color
 ``` Swift
 senseHat.set(color: .black) // clear
 senseHat.set(x: 0, y: 0, color: .white) // set most top left LED to white using function syntax
@@ -68,20 +73,36 @@ senseHat[7, 7] = .green // set most bottom right LED to green using subscript sy
 ```
 ![White and green]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/white-green.png "White and green")
 
-Show character on LED matrix:
+Coordinates `x` and `y` should belong to `0..<7` range.
+
+## Show character on LED matrix
 
 ``` Swift
 senseHat.show(character: Character("A"), color: .blue)
 ```
+
 ![A]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/A.png "A")
 
-Show string on LED matrix:
-
 ``` Swift
-senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .blue)
+senseHat.show(character: Character("π"), color: .yellow, background: .blue)
 ```
 
-![Hello]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello")
+![pi]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/pi.png "pi")
+
+## Show string on LED matrix
+
+``` Swift
+senseHat.show(string: "Hello!", secPerChar: 0.5, color: .yellow, background: .blue)
+```
+
+![Hello!]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello!")
+
+``` Swift
+senseHat.orientation = .left
+senseHat.show(string: "Απόλλων", secPerChar: 0.5, color: .red, background: .darkGray)
+```
+
+![Απόλλων]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/apollon.gif "Απόλλων")
 
 # Useful links
 
