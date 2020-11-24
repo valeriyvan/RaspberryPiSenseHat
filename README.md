@@ -51,7 +51,7 @@ Parameter `orientation` could be used for other orientations" `SenseHat(orientat
 Parameter `frameBufferDevice` could be use for specific frame buffer device: `SenseHat(frameBufferDevice: "/dev/fb0")`.
 Both parameters could be used:  `SenseHat(frameBufferDevice: "/dev/fb0", orientation: .down)`.
 
-Set all LEDs of matrix to specific color (`'black` color could be used for turning LEDs off):
+Set all LEDs of matrix to specific color (`.black` color could be used for turning LEDs off):
 
 ``` Swift
 senseHat.set(color: .red)
