@@ -217,7 +217,17 @@ final class SenseHatTests: XCTestCase {
                 XCTAssertEqual(senseHat.color(absoluteX: x, absoluteY: y), .darkGray)
             }
         }
- }
+    }
+
+    func testShowMissingCharacter() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        senseHat.show(character: Character("Ї"), color: .purple, background: .purple)
+        for x in senseHat.indices {
+            for y in senseHat.indices {
+                XCTAssertEqual(senseHat.color(x: x, y: y), .purple)
+            }
+        }
+    }
 
     func testShowCharacterRight() {
         let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
