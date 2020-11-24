@@ -78,7 +78,7 @@ senseHat.show(character: Character("A"), color: .blue)
 Show string on LED matrix:
 
 ``` Swift
-senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .black)
+senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .blue)
 ```
 
 ![Hello]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello")
