@@ -83,6 +83,8 @@ senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .bl
 
 ![Hello]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello")
 
+There are visual artefacts in web simulator, probably, because of experimental WASM compiler used. These artifacts don't appear on real Sense Hat.
+
 # Useful links
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
