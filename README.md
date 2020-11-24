@@ -73,12 +73,15 @@ Show character on LED matrix:
 ``` Swift
 senseHat.show(character: Character("A"), color: .blue)
 ```
+![A]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/A.png "A")
 
 Show string on LED matrix:
 
 ``` Swift
 senseHat.show(string: "Hello!", secPerChar: 0.2, color: .yellow, background: .black)
 ```
+
+![Hello]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello")
 
 # Useful links
 
