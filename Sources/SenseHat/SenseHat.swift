@@ -309,12 +309,12 @@ public class SenseHat {
             let i = Int(unicodeCodePoint) - 0xE541
             return withUnsafeBytes(of: &font8x8_sga) { charData($0, i, c, b) }
         default:
-            let allBlack =
-                [Rgb565](repeating: .black, count: indices.count * indices.count)
+            let background =
+                [Rgb565](repeating: b, count: indices.count * indices.count)
                     .withUnsafeBytes {
                         Data($0)
                     }
-            return allBlack
+            return background
         }
     }
 
