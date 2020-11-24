@@ -446,7 +446,7 @@ public class ColumnsIterator: IteratorProtocol {
             charData = charGenerator(char)
         }
         defer {
-            if x == xCount {
+            if x == xCount - 1 {
                 x = 0
                 if let char = stringIterator.next() {
                     charData = charGenerator(char)
