@@ -358,7 +358,10 @@ public class SenseHat {
         for y in indices {
             frameBufferPointer[offset(x: indices.last!, y: y)] = column[y]
         }
-        sync?(frameBufferPointer)
+        let frameBufferCopy = UnsafeMutableBufferPointer<Rgb565>.allocate(capacity: 8*8)
+        _ = frameBufferCopy.initialize(from: frameBufferPointer)
+        sync?(frameBufferCopy)
+        frameBufferCopy.deallocate()
     }
 
     /// Shows `string` in LED matrix with animation from right to left with
