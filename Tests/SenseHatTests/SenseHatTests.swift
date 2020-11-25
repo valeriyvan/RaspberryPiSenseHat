@@ -512,11 +512,7 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(counter, 1)
     }
 
-    func testColumtsIterator() {
-//        var counter = 0
-//        func sync(_ frameBuffer: UnsafeMutableBufferPointer<SenseHat.Rgb565>) {
-//            counter += 1
-//        }
+    func testColumnsIterator() {
         let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         let d0 = senseHat.data()
         let d1 = senseHat.data(character: "*", color: .yellow, background: .blue)
@@ -537,7 +533,7 @@ final class SenseHatTests: XCTestCase {
             XCTAssertEqual(column, columnSample)
             counter += 1
         }
-        XCTAssertEqual(counter, senseHat.indices.count + 1)
+        XCTAssertEqual(counter, senseHat.indices.count)
     }
 
     static var allTests = [
@@ -564,6 +560,7 @@ final class SenseHatTests: XCTestCase {
         ("testTranspose", testTranspose),
         ("testRotate90", testRotate90),
         ("testSyncCalledForSet", testSyncCalledForSet),
+        ("testColumnsIterator", testColumnsIterator),
     ]
 }
 
