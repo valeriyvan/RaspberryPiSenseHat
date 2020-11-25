@@ -405,7 +405,7 @@ public class SenseHat {
         let it = ColumnsIterator(
             string: string,
             charGenerator: { [unowned self] c in
-                self.data(character: c, color: color, background: background)
+                self.data(character: c, color: color, background: background, orientation: .up)
             },
             xCount: indices.count,
             yCount: indices.count
@@ -424,7 +424,7 @@ public class ColumnsIterator: IteratorProtocol {
     private let string: String
     private var stringIterator: String.Iterator
     private var x = 0
-    private var charData: Data? // Pixel data of character string[index]
+    private var charData: Data? // Pixel data of character string[string.index(string.startIndex, offsetBy: index)]
     private let charGenerator: (Character) -> Data
     private let xCount: Int
     private let yCount: Int
