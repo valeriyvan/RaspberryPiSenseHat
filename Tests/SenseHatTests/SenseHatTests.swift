@@ -428,6 +428,17 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testCharDataLeftNotEqualRight() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
+        let unicodePoint: Int = 0x2598 // U+2598 (box top left)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let dataLeft = senseHat.data(character: char, color: .yellow, background: .blue)
+        senseHat.orientation = .right
+        let dataRight = senseHat.data(character: char, color: .yellow, background: .blue)
+        XCTAssertNotEqual(dataLeft, dataRight)
+    }
+
+
     func testShiftLeftAllOrientations() {
         for orientation in SenseHat.Orientation.allCases {
             let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: orientation)!
@@ -511,6 +522,7 @@ final class SenseHatTests: XCTestCase {
         ("testCharDataRight", testCharDataRight),
         ("testCharDataDown", testCharDataDown),
         ("testCharDataLeft", testCharDataLeft),
+        ("testCharDataLeftNotEqualRight", testCharDataLeftNotEqualRight),
         ("testShiftLeftAllOrientations", testShiftLeftAllOrientations),
         ("testReflectHorizontally", testReflectHorizontally),
         ("testReflectVertically", testReflectVertically),
@@ -541,4 +553,3 @@ private extension Data {
         }
     }
 }
-
