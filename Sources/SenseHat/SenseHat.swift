@@ -376,7 +376,7 @@ public class SenseHat {
     ///   - background: Background color of string.
     ///   - usleep: function for delaying execution. Workaround for WASM where
     ///     both usleep and sleep have runtime error.
-    public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black, usleep: ((useconds_t)->Void) = standardUsleep) {
+    public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black, usleep _sleep: ((useconds_t)->Void) = standardUsleep) {
         let delay: useconds_t = useconds_t(Double(1_000_000) * temp / Double(indices.count))
         print(delay)
         for c in string {
@@ -396,7 +396,7 @@ public class SenseHat {
                     return row
                 }
                 shiftLeft(addingColumn: row)
-                usleep(delay)
+                _sleep(delay)
             }
         }
     }
