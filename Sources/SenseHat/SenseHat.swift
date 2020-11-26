@@ -725,9 +725,9 @@ extension Data {
 
     /// Looks on buffer like on matrix with C layout and reflects this matrix vertically.
     mutating func reflectVertically(elementSize: Int) {
-        let N = Int(Double(count).squareRoot())
+        let N = Int(Double(count / elementSize).squareRoot())
         precondition(N > 2)
-        precondition(N * N == count)
+        precondition(N * N == count / elementSize)
         for x in 0 ..< N / 2 {
             for y in 0 ..< N {
                 swapAt(y * N + x, y * N + N - x - 1, elementSize: elementSize)
@@ -737,9 +737,9 @@ extension Data {
 
     /// Looks on buffer like on matrix with C layout and reflects this matrix horizontally.
     mutating func reflectHorizontally(elementSize: Int) {
-        let N = Int(Double(count).squareRoot())
+        let N = Int(Double(count / elementSize).squareRoot())
         precondition(N > 2)
-        precondition(N * N == count)
+        precondition(N * N == count / elementSize)
         for x in 0 ..< N {
             for y in 0 ..< N / 2 {
                 swapAt(y * N + x, (N - y - 1) * N + x, elementSize: elementSize)
