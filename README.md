@@ -98,17 +98,31 @@ senseHat.show(character: Character("π"), color: .yellow, background: .blue)
 ## Show string on LED matrix
 
 ``` Swift
-senseHat.show(string: "Hello!", secPerChar: 0.5, color: .yellow, background: .blue)
+senseHat.show(string: "Hello! ", secPerChar: 0.5, color: .yellow, background: .blue)
 ```
 
-![Hello!]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/Hello.gif "Hello!")
+![Hello!]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/hello.gif "Hello!")
 
 ``` Swift
 senseHat.orientation = .left
-senseHat.show(string: "Απόλλων", secPerChar: 0.5, color: .red, background: .darkGray)
+senseHat.show(string: "Απόλλων ", secPerChar: 0.5, color: .red, background: .darkGray)
 ```
 
-![Απόλλων]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/apollon.gif "Απόλλων")
+![Greek]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/greek.gif "Greek")
+
+``` Swift
+senseHat.orientation = .right
+senseHat.show(string: "ここからそこまで ", secPerChar: 0.5, color: .white, background: .brown)
+```
+
+![Hiragana]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/hiragana.gif "Hiragana")
+
+``` Swift
+senseHat.orientation = .down
+senseHat.show(string: "Fußgängerübergänge ", secPerChar: 0.5, color: .white, background: .purple)
+```
+
+![deutsch]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/deutsch.gif "deutsch")
 
 # Useful links
 
