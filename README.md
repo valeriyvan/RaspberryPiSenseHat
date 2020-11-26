@@ -101,7 +101,7 @@ senseHat.show(character: Character("π"), color: .yellow, background: .blue)
 senseHat.show(string: "Hello! ", secPerChar: 0.5, color: .yellow, background: .blue)
 ```
 
-![Hello!]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/hello!.gif "Hello!")
+![Hello!]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/hello.gif "Hello!")
 
 ``` Swift
 senseHat.orientation = .left
