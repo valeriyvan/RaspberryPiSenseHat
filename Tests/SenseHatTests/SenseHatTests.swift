@@ -431,8 +431,10 @@ final class SenseHatTests: XCTestCase {
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let dataLeft = senseHat.data(character: char, color: .yellow, background: .blue)
+        //print(dataLeft.customDebugDescription)
         senseHat.orientation = .right
         let dataRight = senseHat.data(character: char, color: .yellow, background: .blue)
+        //print(dataRight.customDebugDescription)
         XCTAssertNotEqual(dataLeft, dataRight)
     }
 
