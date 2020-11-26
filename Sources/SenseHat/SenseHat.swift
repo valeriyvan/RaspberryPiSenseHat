@@ -410,9 +410,9 @@ public class SenseHat {
                 case .up:
                     ()
                 case .right:
-                    fatalError("Rotation \(self.orientation) is not implemented yet")
+                    ()
                 case .down:
-                    fatalError("Rotation \(self.orientation) is not implemented yet")
+                    ()
                 case .left:
                     data.rotate(angle: -Double.pi / 2.0, elementSize: MemoryLayout<Rgb565>.stride)
                 }
