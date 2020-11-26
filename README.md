@@ -51,6 +51,12 @@ Parameter `orientation` could be used for other orientations" `SenseHat(orientat
 Parameter `frameBufferDevice` could be use for specific frame buffer device: `SenseHat(frameBufferDevice: "/dev/fb0")`.
 Both parameters could be used:  `SenseHat(frameBufferDevice: "/dev/fb0", orientation: .down)`.
 
+Parameter orientation defines where top of the LED matrix will be. Here are example of the same character `"1"` shown with different orientations:
+
+`.up` | `.left` | `.right` | `.down`
+--- | --- | --- | ---
+![1 up]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/1up.png) | ![1 left]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/1left.png) | ![1 right]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/1right.png) | ![1 down]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/1down.png)
+
 ## Set all LEDs of matrix to specific color 
 
 ``` Swift
