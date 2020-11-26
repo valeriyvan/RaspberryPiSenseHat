@@ -538,6 +538,38 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(counter, senseHat.indices.count)
     }
 
+    func testIterateColumnsUp() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        let it = senseHat.iterateColumns(string: "* ", color: .white, background: .black)
+        let d0 = senseHat.data(character: "*", color: .white, background: .black)
+        print(d0.customDebugDescription)
+        let d1 = senseHat.data() // space
+        let d = [d0, d1]
+        var colCounter = 0
+        while it() {
+            print(colCounter)
+            // String appears on matrix from right to left column by column squezing
+            // off old matrix content.
+            // Here we compare only "new" matrix content with reference.
+            let data = senseHat.data()
+            print(data.customDebugDescription)
+            let startMatrixColumn = max(8 - colCounter - 1, 0)
+            let rangeOfColumnsInMatrix = startMatrixColumn..<8
+            let startGlobalColumnIndex = colCounter - rangeOfColumnsInMatrix.count + 1
+            for (n, x) in rangeOfColumnsInMatrix.enumerated() {
+                // testable column
+                let column = data.column(x)
+                // sample column
+                let globalSampleColumnIndex = startGlobalColumnIndex + n
+                let (sampleCharIndex, sampleColumnIndex) = globalSampleColumnIndex.quotientAndRemainder(dividingBy: senseHat.indices.count)
+                let columnSample = d[sampleCharIndex].column(sampleColumnIndex)
+                XCTAssertEqual(column, columnSample, "colCounter = \(colCounter)")
+            }
+            colCounter += 1
+        }
+        XCTAssertEqual(colCounter, senseHat.indices.count * 2)
+    }
+
     static var allTests = [
         ("testRgb565", testRgb565),
         ("testSetGetPixelColorUp", testSetGetPixelColorUp),
@@ -563,6 +595,7 @@ final class SenseHatTests: XCTestCase {
         ("testRotate90", testRotate90),
         ("testSyncCalledForSet", testSyncCalledForSet),
         ("testColumnsIterator", testColumnsIterator),
+        ("testIterateColumnsUp", testIterateColumnsUp),
     ]
 }
 
