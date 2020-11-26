@@ -542,7 +542,6 @@ extension SenseHat {
     public func transpose() {
         // This in place matrix transpose works only for square matrices.
         // https://en.wikipedia.org/wiki/In-place_matrix_transposition#Square_matrices
-        precondition(indices.count == indices.count)
         let N = indices.count
         precondition(N > 2)
         for x in 0 ..< N - 1 {
