@@ -410,9 +410,9 @@ public class SenseHat {
                 case .up:
                     ()
                 case .right:
-                    ()
+                    data.rotate(angle: Double.pi / 2.0, elementSize: MemoryLayout<Rgb565>.stride)
                 case .down:
-                    ()
+                    data.rotate(angle: Double.pi, elementSize: MemoryLayout<Rgb565>.stride)
                 case .left:
                     data.rotate(angle: -Double.pi / 2.0, elementSize: MemoryLayout<Rgb565>.stride)
                 }
