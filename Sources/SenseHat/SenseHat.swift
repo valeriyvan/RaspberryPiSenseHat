@@ -405,7 +405,18 @@ public class SenseHat {
         let it = ColumnsIterator(
             string: string,
             charGenerator: { [unowned self] c in
-                self.data(character: c, color: color, background: background)
+                var data = self.data(character: c, color: color, background: background)
+                switch self.orientation {
+                case .up:
+                    ()
+                case .right:
+                    fatalError("Rotation \(self.orientation) is not implemented yet")
+                case .down:
+                    fatalError("Rotation \(self.orientation) is not implemented yet")
+                case .left:
+                    data.rotate(angle: -Double.pi / 2.0, elementSize: MemoryLayout<Rgb565>.stride)
+                }
+                return data
             },
             xCount: indices.count,
             yCount: indices.count
@@ -650,6 +661,130 @@ extension SenseHat {
         for x in indices {
             for y in 0 ..< N / 2 {
                 frameBufferPointer.swapAt(offset(x: x, y: y), offset(x: x, y: N - y - 1))
+            }
+        }
+    }
+
+}
+
+extension Data {
+
+    /// Looks on buffer like on matrix with C layout and rotates this matrix to angle `angle`.
+    /// At the moment only angles 0, 𝜋 / 2, 3 * 𝜋 / 2 and 2 * 𝜋 are supported.
+    ///
+    /// - Parameter angle: Angle of rotation in radians.
+    mutating func rotate(angle: Double, elementSize: Int) {
+        precondition(elementSize > 0)
+        var angle = angle.truncatingRemainder(dividingBy: 2.0 * Double.pi)
+        angle = angle < 0.0 ? angle + 2.0 * Double.pi : angle
+        // `Double.ulpOfOne` doesn't work in this case already after 10 full rotations.
+        let epsilon = 0.0001
+        if fabs(angle - 0.0) < epsilon || fabs(angle - 2.0 * Double.pi) < epsilon {
+            // already there
+        } else if fabs(angle - Double.pi / 2.0) < epsilon {
+            transpose(elementSize: elementSize)
+            reflectHorizontally(elementSize: elementSize)
+        } else if fabs(angle - Double.pi) < epsilon {
+            reflectHorizontally(elementSize: elementSize)
+            reflectVertically(elementSize: elementSize)
+        } else if fabs(angle - 3.0 * Double.pi / 2.0) < epsilon {
+            transpose(elementSize: elementSize)
+            reflectVertically(elementSize: elementSize)
+        } else {
+            fatalError("Rotation to arbitrary angle not implemented.")
+        }
+    }
+
+    mutating func swapAt(_ a: Int, _ b: Int, elementSize: Int) {
+        precondition(elementSize > 0)
+        precondition(count >= 2)
+        let validRange = 0 ..< count / elementSize
+        precondition( validRange ~= a && validRange ~= b)
+        guard a != b else { return }
+        for offset in 0..<elementSize {
+            let bb = self[b * elementSize + offset]
+            self[b * elementSize + offset] = self[a * elementSize + offset]
+            self[a * elementSize + offset] = bb
+        }
+    }
+
+    /// Looks on buffer like on matrix with C layout and transposes this matrix.
+    mutating func transpose(elementSize: Int) {
+        precondition(count % elementSize == 0)
+        // This in place matrix transpose works only for square matrices.
+        // https://en.wikipedia.org/wiki/In-place_matrix_transposition#Square_matrices
+        let N = Int(Double(count / elementSize).squareRoot())
+        precondition(N * N == count / elementSize)
+        precondition(N > 2)
+        for x in 0 ..< N - 1 {
+            for y in x + 1 ..< N {
+                swapAt(y * N + x, x * N + y, elementSize: elementSize)
+            }
+        }
+    }
+
+    /// Looks on buffer like on matrix with C layout and reflects this matrix vertically.
+    mutating func reflectVertically(elementSize: Int) {
+        let N = Int(Double(count).squareRoot())
+        precondition(N > 2)
+        precondition(N * N == count)
+        for x in 0 ..< N / 2 {
+            for y in 0 ..< N {
+                swapAt(y * N + x, y * N + N - x - 1, elementSize: elementSize)
+            }
+        }
+    }
+
+    /// Looks on buffer like on matrix with C layout and reflects this matrix horizontally.
+    mutating func reflectHorizontally(elementSize: Int) {
+        let N = Int(Double(count).squareRoot())
+        precondition(N > 2)
+        precondition(N * N == count)
+        for x in 0 ..< N {
+            for y in 0 ..< N / 2 {
+                swapAt(y * N + x, (N - y - 1) * N + x, elementSize: elementSize)
+            }
+        }
+    }
+
+}
+
+extension UnsafeMutableBufferPointer {
+
+    /// Looks on buffer like on matrix with C layout and transposes this matrix.
+    public func transpose() {
+        // This in place matrix transpose works only for square matrices.
+        // https://en.wikipedia.org/wiki/In-place_matrix_transposition#Square_matrices
+        let N = Int(Double(count).squareRoot())
+        precondition(N * N == count)
+        precondition(N > 2)
+        for x in 0 ..< N - 1 {
+            for y in x + 1 ..< N {
+                swapAt(y * N + x, x * N + y)
+            }
+        }
+    }
+
+    /// Looks on buffer like on matrix with C layout and reflects this matrix vertically.
+    public func reflectVertically() {
+        let N = Int(Double(count).squareRoot())
+        precondition(N > 2)
+        precondition(N * N == count)
+        for x in 0 ..< N / 2 {
+            for y in 0 ..< N {
+                swapAt(y * N + x, y * N + N - x - 1)
+            }
+        }
+    }
+
+    /// Looks on buffer like on matrix with C layout and reflects this matrix horizontally.
+    public func reflectHorizontally() {
+        let N = Int(Double(count).squareRoot())
+        precondition(N > 2)
+        precondition(N * N == count)
+        for x in 0 ..< N {
+            for y in 0 ..< N / 2 {
+                swapAt(y * N + x, (N - y - 1) * N + x)
             }
         }
     }
