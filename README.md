@@ -34,7 +34,8 @@ TODO:
 * menu to show readings from any of available sensors;
 * mode for rotating screen depending on gyro readings;
 * emulator of SenseHat LED matrix for Web;
-* Kalman filtering for accelerometer/gyro/magnitometer.
+* Kalman filtering for accelerometer/gyro/magnitometer;
+* add analog clock demo app.
 
 # Usage
 
