@@ -193,7 +193,8 @@ extension SenseHat {
             print("press_out = \(press_out)")
         }
 
-        // Calculate output values
+        // Calculate output values.
+        // Formulas come from datasheet https://www.st.com/resource/en/datasheet/lps25h.pdf
         let T_DegC = 42.5 + (Double(temp_out) / 480.0)
         if logRawReadings {
             print("T_DegC = \(T_DegC)")
