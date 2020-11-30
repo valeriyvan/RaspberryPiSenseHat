@@ -125,6 +125,31 @@ senseHat.show(string: "Fußgängerübergänge ", secPerChar: 0.5, color: .white,
 
 ![deutsch]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/deutsch.gif "deutsch")
 
+## Reading humidity sensor
+
+``` Swift
+if let h = senseHat.humidity() {
+    let strH = String(format: "%.1lf", h.H_rH)
+    senseHat.show(string: "Humidity \(strH)% rH ", secPerChar: 0.5, color: .yellow, background: .black)
+    let strT = String(format: "%.1lf", h.T_DegC)
+    senseHat.show(string: "Temperature \(strT)ºC", secPerChar: 0.5, color: .yellow, background: .black)
+} else {
+    print("Cannot read humidity sensor")
+}
+```
+## Reading pressure sensor
+
+``` Swift
+if let p = senseHat.pressure() {
+    let strP = String(format: "%.1lf", p.P_hPa)
+    let strT = String(format: "%.1lf", p.T_DegC)
+    senseHat.show(string: "Pressure \(strP) hPa ", secPerChar: 0.5, color: .yellow, background: .black)
+    senseHat.show(string: "Temperature \(strT)ºC", secPerChar: 0.5, color: .yellow, background: .black)
+} else {
+    print("Cannot read pressure sensor")
+}
+```
+
 # Useful links
 
 Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
