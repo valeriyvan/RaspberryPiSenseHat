@@ -118,6 +118,11 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(veryLightGray.blue, 0b11)
     }
 
+    func testInitializerFails() {
+        let senseHat = SenseHat(frameBufferDevice: nil, orientation: .up)
+        XCTAssertNil(senseHat)
+    }
+
     func testSetGetPixelColorUp() {
         let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.set(x: 5, y: 6, color: .red)
@@ -567,6 +572,7 @@ final class SenseHatTests: XCTestCase {
 
     static var allTests = [
         ("testRgb565", testRgb565),
+        ("testInitializerFails", testInitializerFails),
         ("testSetGetPixelColorUp", testSetGetPixelColorUp),
         ("testSetGetPixelColorRight", testSetGetPixelColorRight),
         ("testSetGetPixelColorDown", testSetGetPixelColorDown),
