@@ -102,15 +102,20 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(darkGray.blue, 0b0000_1010) // 1/3
         XCTAssertEqual(darkGray.red, UInt8(((1.0/3.0*Float(0b1_1111)).rounded(.toNearestOrAwayFromZero))))
 
-        var veryLightGray = SenseHat.Rgb565()
-        veryLightGray.red = 1
-        veryLightGray.green = 1
-        veryLightGray.blue = 1
-        XCTAssertEqual(veryLightGray.value, 0b0000_1000_0010_0001)
-        XCTAssertEqual(veryLightGray.red, 1)
-        XCTAssertEqual(veryLightGray.green, 1)
-        XCTAssertEqual(veryLightGray.blue, 1)
+        var veryVeryLightGray = SenseHat.Rgb565()
+        veryVeryLightGray.red = 1
+        veryVeryLightGray.green = 1
+        veryVeryLightGray.blue = 1
+        XCTAssertEqual(veryVeryLightGray.value, 0b0000_1000_0010_0001)
+        XCTAssertEqual(veryVeryLightGray.red, 1)
+        XCTAssertEqual(veryVeryLightGray.green, 1)
+        XCTAssertEqual(veryVeryLightGray.blue, 1)
 
+        let veryLightGray = SenseHat.Rgb565(red: 0b11, green: 0b11, blue: 0b11)
+        XCTAssertEqual(veryLightGray.value, 0b0001_1000_0110_0011)
+        XCTAssertEqual(veryLightGray.red, 0b11)
+        XCTAssertEqual(veryLightGray.green, 0b11)
+        XCTAssertEqual(veryLightGray.blue, 0b11)
     }
 
     func testSetGetPixelColorUp() {
