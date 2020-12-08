@@ -511,12 +511,20 @@ final class SenseHatTests: XCTestCase {
         let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
+        // positive angle
         var angle = 0.0
         for _ in 0..<4*10 {
             senseHat.rotate(angle: angle)
             angle += Double.pi / 2.0
         }
         let rotated = senseHat.data()
+        XCTAssertEqual(sample, rotated)
+        // negative angle
+        angle = 0.0
+        for _ in 0..<4*10 {
+            senseHat.rotate(angle: angle)
+            angle -= Double.pi / 2.0
+        }
         XCTAssertEqual(sample, rotated)
     }
 
