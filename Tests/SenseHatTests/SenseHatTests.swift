@@ -505,6 +505,43 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, rotated)
     }
 
+    func testDebugDescription() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        senseHat.set(color: .black)
+        let debugDescriptionBlack = senseHat.debugDescription
+        print(debugDescription)
+        let sampleBlack = """
+             01234567
+            0        0
+            1        1
+            2        2
+            3        3
+            4        4
+            5        5
+            6        6
+            7        7
+             01234567
+            """
+        XCTAssertEqual(sampleBlack, debugDescriptionBlack)
+
+        senseHat.set(color: .white)
+        let debugDescriptionWhite = senseHat.debugDescription
+        print(debugDescription)
+        let sampleWhite = """
+             01234567
+            0XXXXXXXX0
+            1XXXXXXXX1
+            2XXXXXXXX2
+            3XXXXXXXX3
+            4XXXXXXXX4
+            5XXXXXXXX5
+            6XXXXXXXX6
+            7XXXXXXXX7
+             01234567
+            """
+        XCTAssertEqual(sampleWhite, debugDescriptionWhite)
+    }
+
     static var allTests = [
         ("testRgb565", testRgb565),
         ("testSetGetPixelColorUp", testSetGetPixelColorUp),
@@ -528,6 +565,7 @@ final class SenseHatTests: XCTestCase {
         ("testReflectVertically", testReflectVertically),
         ("testTranspose", testTranspose),
         ("testRotate90", testRotate90),
+        ("testDebugDescription", testDebugDescription),
     ]
 }
 
