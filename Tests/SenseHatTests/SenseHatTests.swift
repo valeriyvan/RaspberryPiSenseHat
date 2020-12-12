@@ -448,6 +448,57 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testCharDataExtLatin() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        let unicodePoint: Int = 0x00A0 // U+00A0 (no break space)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .white, background: .black)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            for i in 0..<count {
+                XCTAssertEqual(bufferPointer[i], .black)
+            }
+        }
+    }
+
+    func testCharDataBox() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        let unicodePoint: Int = 0x2500 // U+2500 (thin horizontal)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .white, background: .black)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            // Check pixels of box top left
+            for x in senseHat.indices {
+                for y in senseHat.indices {
+                    XCTAssertEqual(bufferPointer[y * senseHat.indices.count + x], y == 4 ? .white : .black)
+                }
+            }
+        }
+    }
+
+    func testCharDataHiragana() {
+        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+        let unicodePoint: Int = 0x3040 // U+3040
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .white, background: .black)
+        data.withUnsafeBytes { buf in
+            let count = senseHat.indices.count * senseHat.indices.count
+            precondition(count == buf.count / MemoryLayout<SenseHat.Rgb565>.stride)
+            let start = buf.baseAddress!.assumingMemoryBound(to: SenseHat.Rgb565.self)
+            let bufferPointer = UnsafeBufferPointer<SenseHat.Rgb565>(start: start, count: count)
+            for i in 0..<count {
+                XCTAssertEqual(bufferPointer[i], .black)
+            }
+        }
+    }
+
     func testCharDataLeftNotEqualRight() {
         let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
@@ -588,6 +639,9 @@ final class SenseHatTests: XCTestCase {
         ("testCharDataRight", testCharDataRight),
         ("testCharDataDown", testCharDataDown),
         ("testCharDataLeft", testCharDataLeft),
+        ("testCharDataExtLatin", testCharDataExtLatin),
+        ("testCharDataBox", testCharDataBox),
+        ("testCharDataHiragana", testCharDataHiragana),
         ("testCharDataLeftNotEqualRight", testCharDataLeftNotEqualRight),
         ("testShiftLeftAllOrientations", testShiftLeftAllOrientations),
         ("testReflectHorizontally", testReflectHorizontally),
