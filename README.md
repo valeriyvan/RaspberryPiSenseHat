@@ -137,6 +137,9 @@ if let h = senseHat.humidity() {
     print("Cannot read humidity sensor")
 }
 ```
+
+![humidity]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/humidity.gif "humidity")
+
 ## Reading pressure sensor
 
 ``` Swift
@@ -149,6 +152,8 @@ if let p = senseHat.pressure() {
     print("Cannot read pressure sensor")
 }
 ```
+
+![pressure]( https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/pressure.gif "pressure")
 
 # Useful links
 
