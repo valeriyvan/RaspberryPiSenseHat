@@ -123,8 +123,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertNil(senseHat)
     }
 
-    func testSetGetPixelColorUp() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testSetGetPixelColorUp() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -137,8 +137,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetGetPixelColorRight() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
+    func testSetGetPixelColorRight() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .right))
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -151,8 +151,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetGetPixelColorDown() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
+    func testSetGetPixelColorDown() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .down))
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -165,8 +165,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetGetPixelColorLeft() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
+    func testSetGetPixelColorLeft() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .left))
         senseHat.set(x: 5, y: 6, color: .red)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -179,8 +179,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetGetPixelColorSubscript() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testSetGetPixelColorSubscript() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat[5, 6] = .red
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -193,8 +193,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetMatrixColor() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testSetMatrixColor() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.set(color: .yellow)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -203,8 +203,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testSetGetData() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testSetGetData() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let dataBefore = senseHat.data()
         senseHat.set(x: 0, y: 0, color: .purple)
         let dataAfter = senseHat.data()
@@ -214,8 +214,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(dataBefore, dataAfterReverting)
     }
 
-    func testShowCharacterUp() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testShowCharacterUp() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -239,8 +239,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testShowMissingCharacter() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testShowMissingCharacter() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.show(character: Character("Ї"), color: .purple, background: .purple)
         for x in senseHat.indices {
             for y in senseHat.indices {
@@ -249,8 +249,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testShowCharacterRight() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
+    func testShowCharacterRight() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .right))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -274,8 +274,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testShowCharacterDown() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
+    func testShowCharacterDown() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .down))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -299,8 +299,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testShowCharacterLeft() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
+    func testShowCharacterLeft() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .left))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         senseHat.show(character: char, color: .purple, background: .darkGray)
@@ -324,8 +324,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataUp() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testCharDataUp() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -355,8 +355,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataRight() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .right)!
+    func testCharDataRight() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .right))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -386,8 +386,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataDown() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .down)!
+    func testCharDataDown() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .down))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -417,8 +417,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataLeft() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
+    func testCharDataLeft() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .left))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -448,8 +448,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataExtLatin() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testCharDataExtLatin() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x00A0 // U+00A0 (no break space)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .white, background: .black)
@@ -464,8 +464,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataBox() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testCharDataBox() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x2500 // U+2500 (thin horizontal)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .white, background: .black)
@@ -483,8 +483,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataHiragana() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testCharDataHiragana() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x3040 // U+3040
         let char = Character(UnicodeScalar(unicodePoint)!)
         let data = senseHat.data(character: char, color: .white, background: .black)
@@ -499,8 +499,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testCharDataLeftNotEqualRight() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .left)!
+    func testCharDataLeftNotEqualRight() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .left))
         let unicodePoint: Int = 0x2598 // U+2598 (box top left)
         let char = Character(UnicodeScalar(unicodePoint)!)
         let dataLeft = senseHat.data(character: char, color: .yellow, background: .blue)
@@ -510,9 +510,9 @@ final class SenseHatTests: XCTestCase {
     }
 
 
-    func testShiftLeftAllOrientations() {
+    func testShiftLeftAllOrientations() throws {
         for orientation in SenseHat.Orientation.allCases {
-            let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: orientation)!
+            let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: orientation))
             let dataBefore = senseHat.data()
             let redColumn = Array(repeating: SenseHat.Rgb565.red, count: 8)
             senseHat.shiftLeft(addingColumn: redColumn)
@@ -533,8 +533,8 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
-    func testReflectHorizontally() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testReflectHorizontally() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.show(character: Character("/"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectHorizontally()
@@ -543,8 +543,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, twiceFlipped)
     }
 
-    func testReflectVertically() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testReflectVertically() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.show(character: Character("P"), color: .blue)
         let sample = senseHat.data()
         senseHat.reflectVertically()
@@ -553,8 +553,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, twiceFlipped)
     }
 
-    func testTranspose() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testTranspose() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         senseHat.transpose()
@@ -563,8 +563,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, twiceFlipped)
     }
 
-    func testRotate90() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testRotate90() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.show(character: Character("8"), color: .blue)
         let sample = senseHat.data()
         // positive angle
@@ -584,8 +584,8 @@ final class SenseHatTests: XCTestCase {
         XCTAssertEqual(sample, rotated)
     }
 
-    func testDebugDescription() {
-        let senseHat = SenseHat(frameBufferDevice: "__TEST__", orientation: .up)!
+    func testDebugDescription() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         senseHat.set(color: .black)
         let debugDescriptionBlack = senseHat.debugDescription
         print(debugDescription)
