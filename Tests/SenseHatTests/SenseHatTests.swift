@@ -464,6 +464,17 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testCharDataExtLatin2Scalars() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
+        let charSmallEAccute = Character("\u{65}\u{301}") // e followed by accute
+        let charSmallE = Character("e")
+        let dataTestable = senseHat.data(character: charSmallEAccute, color: .white, background: .black)
+        let dataSample = senseHat.data(character: charSmallE, color: .white, background: .black)
+        print(dataTestable.customDebugDescription)
+        print(dataSample.customDebugDescription)
+        XCTAssertEqual(dataTestable, dataSample)
+    }
+
     func testCharDataBox() throws {
         let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let unicodePoint: Int = 0x2500 // U+2500 (thin horizontal)
