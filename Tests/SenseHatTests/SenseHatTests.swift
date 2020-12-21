@@ -470,8 +470,6 @@ final class SenseHatTests: XCTestCase {
         let charSmallE = Character("e")
         let dataTestable = senseHat.data(character: charSmallEAccute, color: .white, background: .black)
         let dataSample = senseHat.data(character: charSmallE, color: .white, background: .black)
-        print(dataTestable.customDebugDescription)
-        print(dataSample.customDebugDescription)
         XCTAssertEqual(dataTestable, dataSample)
     }
 
