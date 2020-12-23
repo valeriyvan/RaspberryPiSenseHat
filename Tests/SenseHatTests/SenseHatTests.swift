@@ -464,6 +464,48 @@ final class SenseHatTests: XCTestCase {
         }
     }
 
+    func testCharDataGreek() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
+        let char = Character("π")
+        let data = senseHat.data(character: char, color: .white, background: .black)
+        let customDebugDescription = data.customDebugDescription
+        let sampleCustomDebugDescription = """
+         01234567
+        0        0
+        1        1
+        2XXXXXXX 2
+        3 XX XX  3
+        4 XX XX  4
+        5 XX XX  5
+        6 XX XX  6
+        7        7
+         01234567
+        """
+        XCTAssertEqual(customDebugDescription, sampleCustomDebugDescription)
+    }
+
+    func testCharDataSga() throws {
+        let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
+        let unicodePoint: Int = 0xE541 // U+E541 (SGA A)
+        let char = Character(UnicodeScalar(unicodePoint)!)
+        let data = senseHat.data(character: char, color: .white, background: .black)
+        let customDebugDescription = data.customDebugDescription
+        print(customDebugDescription)
+        let sampleCustomDebugDescription = """
+         01234567
+        0        0
+        1        1
+        2   XXX  2
+        3 XX  XX 3
+        4 XX     4
+        5 XX     5
+        6XXX     6
+        7        7
+         01234567
+        """
+        XCTAssertEqual(customDebugDescription, sampleCustomDebugDescription)
+    }
+
     func testCharDataExtLatin2Scalars() throws {
         let senseHat = try XCTUnwrap(SenseHat(frameBufferDevice: "__TEST__", orientation: .up))
         let charSmallEAccute = Character("\u{65}\u{301}") // e followed by accute
@@ -641,6 +683,7 @@ final class SenseHatTests: XCTestCase {
         ("testSetMatrixColor", testSetMatrixColor),
         ("testSetGetData", testSetGetData),
         ("testShowCharacterUp", testShowCharacterUp),
+        ("testShowMissingCharacter", testShowMissingCharacter),
         ("testShowCharacterRight", testShowCharacterRight),
         ("testShowCharacterDown", testShowCharacterDown),
         ("testShowCharacterLeft", testShowCharacterLeft),
@@ -649,6 +692,9 @@ final class SenseHatTests: XCTestCase {
         ("testCharDataDown", testCharDataDown),
         ("testCharDataLeft", testCharDataLeft),
         ("testCharDataExtLatin", testCharDataExtLatin),
+        ("testCharDataGreek", testCharDataGreek),
+        ("testCharDataSga", testCharDataSga),
+        ("testCharDataExtLatin2Scalars", testCharDataExtLatin2Scalars),
         ("testCharDataBox", testCharDataBox),
         ("testCharDataHiragana", testCharDataHiragana),
         ("testCharDataLeftNotEqualRight", testCharDataLeftNotEqualRight),
