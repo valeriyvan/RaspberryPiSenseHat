@@ -259,6 +259,7 @@ public class SenseHat {
     ///   - character: `Character` to be shown on matrix.
     ///   - color: Boreground color.
     ///   - background: Background color.
+    @inlinable
     public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
         set(data: data(character: character, color: c, background: b))
     }
@@ -604,77 +605,100 @@ extension SenseHat {
     // Sense Hat uses two bytes per pixel in frame buffer: red, greed and blue
     // take respectively 5, 6 and 5 bits.
     public struct Rgb565: Equatable {
-        var value: UInt16
+        public var value: UInt16
 
         // Red component of color.
-        var red: UInt8 {
+        public var red: UInt8 {
+            @inlinable
             get {
                 UInt8(truncatingIfNeeded: value >> 11)
             }
+            @inlinable
             set(newValue) {
                 value = (value & 0b0000_0111_1111_1111) | (UInt16(newValue) << 11)
             }
         }
 
         // Green component of color.
-        var green: UInt8 {
+        public var green: UInt8 {
+            @inlinable
             get {
                 UInt8(truncatingIfNeeded: (value & 0b0000_0111_1110_0000) >> 5)
             }
+            @inlinable
             set(newValue) {
                 value = (value & 0b1111_1000_0001_1111) | ((UInt16(newValue) & 0b0011_1111) << 5)
             }
         }
 
         // Blue component of color.
-        var blue: UInt8 {
+        public var blue: UInt8 {
+            @inlinable
             get {
                 UInt8(truncatingIfNeeded: value) & 0b1_1111
             }
+            @inlinable
             set(newValue) {
                 value = (value & 0b1111_1111_1110_0000) | (UInt16(newValue) & 0b0001_1111)
             }
         }
 
+        @inlinable
         init(value: UInt16) {
             self.value = value
         }
 
         // Black
+        @inlinable
         init() {
             self.init(value: 0)
         }
 
+        @inlinable
         init(red: UInt8, green: UInt8, blue: UInt8) {
             value = (UInt16(red) << 11) | ((UInt16(green) & 0b0011_1111) << 5) | (UInt16(blue) & 0b0001_1111)
         }
 
+        @inlinable
         public static var red: Rgb565
             { Rgb565(value: 0b1111_1000_0000_0000) }
+        @inlinable
         public static var green: Rgb565
             { Rgb565(value: 0b0000_0111_1110_0000) }
+        @inlinable
         public static var blue: Rgb565
             { Rgb565(value: 0b0000_0000_0001_1111) }
+        @inlinable
         public static var white: Rgb565
             { Rgb565(value: 0b1111_1111_1111_1111) }
+        @inlinable
         public static var black: Rgb565
             { Rgb565(value: 0b0000_0000_0000_0000) }
+        @inlinable
         public static var brown: Rgb565
             { Rgb565(value: 0b1001_1011_0010_0110) } // R:0.6, G:0.4, B:0.2
+        @inlinable
         public static var cyan: Rgb565
             { Rgb565(value: 0b0000_0111_1111_1111) } // R:0.0, G:1.0, B:1.0
+        @inlinable
         public static var magenta: Rgb565
             { Rgb565(value: 0b1111_1000_0001_1111) } // R:1.0, G:0.0, B:1.0
+        @inlinable
         public static var yellow: Rgb565
             { Rgb565(value: 0b1111_1111_1110_0000) } // R:1.0, G:1.0, B:0.0
+        @inlinable
         public static var purple: Rgb565
             { Rgb565(value: 0b1000_0000_0001_0000) } // R:0.5, G:0.0, B:0.5
+        @inlinable
         public static var orange: Rgb565
             { Rgb565(value: 0b1111_1100_0000_0000) } // R:1.0, G:0.5, B:0.0
+        @inlinable
         public static var gray: Rgb565
             { Rgb565(value: 0b1000_0100_0001_0000) } // R:0.5, G:0.5, B:0.5
+        @inlinable
         public static var lightGray: Rgb565
             { Rgb565(value: 0b1010_1101_0101_0101) } // R:2/3, G:2/3, B:2/3
+        @inlinable
         public static var darkGray: Rgb565
             { Rgb565(value: 0b0101_0010_1010_1010) } // R:1/3, G:1/3, B:1/3
     }
