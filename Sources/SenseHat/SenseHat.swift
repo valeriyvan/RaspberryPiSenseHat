@@ -21,7 +21,8 @@ import Font8x8
 public class SenseHat {
 
     private var fileDescriptor: Int32
-    private var frameBufferPointer: UnsafeMutableBufferPointer<Rgb565>
+    @usableFromInline
+    internal var frameBufferPointer: UnsafeMutableBufferPointer<Rgb565>
 
     private var joystickCallback: JoystickCallback?
     private var joystickCallbackDispatchQueue: DispatchQueue?
@@ -140,6 +141,7 @@ public class SenseHat {
     /// Sets all LEDs of matrix to color `color`.
     ///
     /// - Parameter color: Color
+    @inlinable
     public func set(color: Rgb565) {
         for i in frameBufferPointer.indices {
             frameBufferPointer[i] = color
@@ -152,11 +154,13 @@ public class SenseHat {
     /// - Parameters:
     ///   - x: Coordinate x in range `xIndices`.
     ///   - y: Coordinate y in range `yIndices`.
-    private func offset(x: Int, y: Int) -> Int {
+    @usableFromInline
+    internal func offset(x: Int, y: Int) -> Int {
         return offset(x: x, y: y, orientation: orientation)
     }
 
-    private func offset(x: Int, y: Int, orientation: Orientation) -> Int {
+    @usableFromInline
+    internal func offset(x: Int, y: Int, orientation: Orientation) -> Int {
         precondition(indices ~= x && indices ~= y)
         switch orientation {
         case .up:
@@ -178,10 +182,12 @@ public class SenseHat {
     ///   - y: Coordinate y.
     /// - Precondition: `x` and `y` belong to range `0..<8`.
     public subscript(x: Int, y: Int) -> Rgb565 {
+        @inlinable
         get {
             precondition(indices ~= x && indices ~= y)
             return frameBufferPointer[offset(x: x, y: y)]
         }
+        @inlinable
         set {
             precondition(indices ~= x && indices ~= y)
             frameBufferPointer[offset(x: x, y: y)] = newValue
@@ -196,6 +202,7 @@ public class SenseHat {
     ///   - y: Coordinate y.
     ///   - color: Color.
     /// - Precondition: `x` and `y` belong to range `0..<8`.
+    @inlinable
     public func set(x: Int, y: Int, color: Rgb565) {
         precondition(indices ~= x && indices ~= y)
         frameBufferPointer[offset(x: x, y: y)] = color
@@ -209,6 +216,7 @@ public class SenseHat {
     ///   - y: Coordinate y.
     /// - Returns: Color.
     /// - Precondition: `x` and `y` belong to range `0..<8`.
+    @inlinable
     public func color(x: Int, y: Int) -> Rgb565 {
         precondition(indices ~= x && indices ~= y)
         return frameBufferPointer[offset(x: x, y: y)]
@@ -222,6 +230,7 @@ public class SenseHat {
     ///   - y: Coordinate y.
     /// - Returns: Color.
     /// - Precondition: `x` and `y` belong to range `0..<8`.
+    @inlinable
     public func color(absoluteX x: Int, absoluteY y: Int) -> Rgb565 {
         return frameBufferPointer[offset(x: x, y: y, orientation: .up)]
     }
@@ -230,6 +239,7 @@ public class SenseHat {
     /// pixels of LED matrix.
     ///
     /// Returns: Instance of `Data` struct.
+    @inlinable
     public func data() -> Data {
         precondition(frameBufferPointer.count == indices.count * indices.count)
         return Data(buffer: frameBufferPointer)
