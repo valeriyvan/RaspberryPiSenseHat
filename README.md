@@ -163,7 +163,7 @@ Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn'
 * [Astro Pi: Flight Hardware Tech Specs](https://www.raspberrypi.org/blog/astro-pi-tech-specs/) names all sensors of SenseHat with links on datasheets;
 * Official documentation [Documentation for Sense HAT](https://www.raspberrypi.org/documentation/hardware/sense-hat/);
 * Official Python module [sense-hat](https://pythonhosted.org/sense-hat/);
-* Source of Python module [sense-hat)](https://github.com/astro-pi/python-sense-hat);
+* Source of Python module [sense-hat](https://github.com/astro-pi/python-sense-hat);
 * [Getting started with the Sense HAT](https://projects.raspberrypi.org/en/projects/getting-started-with-the-sense-hat);
 * Rust library [sensehat-screen](https://docs.rs/sensehat-screen/) where it's expained how RGB is packed in two bytes in so called `Rgb565`;
 * Linux [The Frame Buffer Device API](https://www.kernel.org/doc/Documentation/fb/api.txt) used to access pixel buffer;
