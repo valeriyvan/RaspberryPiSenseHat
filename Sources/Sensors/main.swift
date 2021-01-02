@@ -31,8 +31,8 @@ for _ in 0..<100 {
     } else {
         print("Cannot read humidity sensor")
     }
-    print("Waiting 2 seconds\n")
-    sleep(2)
+    print("Waiting 1 second\n")
+    sleep(1)
 
     print("Reading pressure sensor")
     if let p = senseHat.pressure() {
@@ -46,6 +46,19 @@ for _ in 0..<100 {
     } else {
         print("Cannot read pressure sensor")
     }
-    print("Waiting 2 seconds\n")
-    sleep(2)
+    print("Waiting 1 second\n")
+    sleep(1)
+
+    print("Reading gyro")
+    if let (gx, gy, gz) = senseHat.gyro() {
+        let msg = "Gyro gx=\(gx), gy=\(gy), gz=\(gz) "
+        print(msg)
+        senseHat.show(string: msg, secPerChar: 0.5, color: .yellow, background: .black)
+    } else {
+        print("Cannot read gyro")
+    }
+    print("Waiting 1 second\n")
+    sleep(1)
 }
+
+print("Ended")
