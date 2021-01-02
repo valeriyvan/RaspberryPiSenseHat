@@ -18,11 +18,12 @@ Features:
 * ✅ set orientation of LED matrix 0º/90º/180º/270º and make all get/set primitives respect it;
 * ✅ read joystick;
 * ✅ read humidity and pressure sensors;
+* ✅ read gyro sensors;
 * ✅ snake game;
 * ✅ [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 
 TODO:
-* read accelerometer/gyro/magnitometer sensors;
+* read accelerometer/magnitometer sensors;
 * release first version;
 * add example snippets to this README;
 * add conversion of RGB color to Rgb565;
