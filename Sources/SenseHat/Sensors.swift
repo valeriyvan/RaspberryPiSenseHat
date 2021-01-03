@@ -211,7 +211,7 @@ extension SenseHat {
         return Pressure(P_hPa: P_hPa, T_DegC: T_DegC)
     }
 
-    public func gyro() -> (gx: Int, gy: Int, gz: Int)? {
+    public func gyro() -> (x: Int, y: Int, z: Int)? {
         let OUT_X_G: UInt8 = 0x18
         let OUT_Y_G: UInt8 = 0x1A
         let OUT_Z_G: UInt8 = 0x1C
@@ -249,11 +249,11 @@ extension SenseHat {
 
         guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG1_G, value: 0x28)  else { return nil } // 0x28 = 14.9hz, 500dps
 
-        guard let gx = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_G) else { return nil }
-        guard let gy = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_G) else { return nil }
-        guard let gz = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_G) else { return nil }
+        guard let x = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_G) else { return nil }
+        guard let y = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_G) else { return nil }
+        guard let z = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_G) else { return nil }
 
-        return (gx: Int(gx), gy: Int(gy), gz: Int(gz))
+        return (x: Int(x), y: Int(y), z: Int(z))
     }
 
     public func acce() -> (x: Int, y: Int, z: Int)? {

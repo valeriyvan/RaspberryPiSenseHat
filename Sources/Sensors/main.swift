@@ -50,8 +50,8 @@ for _ in 0..<100 {
     sleep(1)
 
     print("Reading gyro")
-    if let (gx, gy, gz) = senseHat.gyro() {
-        let msg = "Gyro gx=\(gx), gy=\(gy), gz=\(gz) "
+    if let (x, y, z) = senseHat.gyro() {
+        let msg = "Gyro x=\(x), y=\(y), z=\(z) "
         print(msg)
         senseHat.show(string: msg, secPerChar: 0.5, color: .yellow, background: .black)
     } else {
