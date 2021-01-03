@@ -250,11 +250,8 @@ extension SenseHat {
         guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG1_G, value: 0x28)  else { return nil } // 0x28 = 14.9hz, 500dps
 
         guard let gx = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_G) else { return nil }
-        print("gx = \(gx)")
         guard let gy = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_G) else { return nil }
-        print("gy = \(gy)")
         guard let gz = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_G) else { return nil }
-        print("gz = \(gz)")
 
         return (gx: Int(gx), gy: Int(gy), gz: Int(gz))
     }
