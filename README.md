@@ -25,7 +25,6 @@ Features:
 TODO:
 * read accelerometer/magnitometer sensors;
 * release first version;
-* add example snippets to this README;
 * add conversion of RGB color to Rgb565;
 * add cyrillic font 8x8;
 * add 3x5 font;
