@@ -59,6 +59,17 @@ for _ in 0..<100 {
     }
     print("Waiting 1 second\n")
     sleep(1)
+
+    print("Reading accelerometer")
+    if let (x, y, z) = senseHat.acce() {
+        let msg = "Accelerometer x=\(x), y=\(y), z=\(z) "
+        print(msg)
+        senseHat.show(string: msg, secPerChar: 0.5, color: .yellow, background: .black)
+    } else {
+        print("Cannot read gyro")
+    }
+    print("Waiting 1 second\n")
+    sleep(1)
 }
 
 print("Ended")
