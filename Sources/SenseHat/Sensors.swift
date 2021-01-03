@@ -211,7 +211,7 @@ extension SenseHat {
         return Pressure(P_hPa: P_hPa, T_DegC: T_DegC)
     }
 
-    public func gyro() -> (gx: Int, gy: Int, gz: Int)? {
+    public func gyro() -> (x: Int, y: Int, z: Int)? {
         let OUT_X_G: UInt8 = 0x18
         let OUT_Y_G: UInt8 = 0x1A
         let OUT_Z_G: UInt8 = 0x1C
@@ -249,11 +249,66 @@ extension SenseHat {
 
         guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG1_G, value: 0x28)  else { return nil } // 0x28 = 14.9hz, 500dps
 
-        guard let gx = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_G) else { return nil }
-        guard let gy = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_G) else { return nil }
-        guard let gz = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_G) else { return nil }
+        guard let x = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_G) else { return nil }
+        guard let y = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_G) else { return nil }
+        guard let z = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_G) else { return nil }
 
-        return (gx: Int(gx), gy: Int(gy), gz: Int(gz))
+        return (x: Int(x), y: Int(y), z: Int(z))
+    }
+
+    public func acce() -> (x: Int, y: Int, z: Int)? {
+        // Values for acceleration sensor
+        let OUT_X_XL: UInt8 = 0x28
+        let OUT_Y_XL: UInt8 = 0x2A
+        let OUT_Z_XL: UInt8 = 0x2C
+
+        // Values listed in the LSM9DS1 specification
+        let CTRL_REG6_XL: UInt8 = 0x20
+        let CTRL_REG4: UInt8 = 0x1E
+        let CTRL_REG1_G: UInt8 = 0x10
+
+        let LSM9DS1_ACC_ID: Int32 = 0x6A
+
+        let DEV_PATH = "/dev/i2c-1"
+
+        // Open i2c device
+        let fileDescriptor: CInt = open(DEV_PATH, O_RDWR)
+        guard fileDescriptor >= 0 else {
+            print("Error \(errno) openning i2c device.", to: &standardError)
+            return nil
+        }
+
+        // Configure i2c slave
+        guard ioctl(fileDescriptor, I2C_SLAVE, LSM9DS1_ACC_ID) != -1 else {
+            print("Error \(errno) configuring i2c device as slave.", to: &standardError)
+            if close(fileDescriptor) != 0 {
+                print("Error \(errno) closing i2c slave device.", to: &standardError)
+            }
+            return nil
+        }
+
+        // Initialization for acc/gyro sensors
+        guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG6_XL, value: 0x60) else { return nil }     /* 119hz accel */
+
+        // Initialize the gyroscope to be used at any angle
+        guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG4, value: 0x38)  else { return nil }
+
+        guard i2c_smbus_write_byte_data(fileDescriptor, register: CTRL_REG1_G, value: 0x28)  else { return nil } // 0x28 = 14.9hz, 500dps
+
+        // Reading the value of the acceleration sensor
+        guard let x = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_X_XL) else { return nil }
+        guard let y = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Y_XL) else { return nil }
+        guard let z = i2c_smbus_read_2byte_data(fileDescriptor, register: OUT_Z_XL) else { return nil }
+
+        // Boundary check
+        var xx = Int(x)
+        var yy = Int(y)
+        var zz = Int(z)
+        if xx > 32767 { xx -= 65536 }
+        if yy > 32767 { yy -= 65536 }
+        if zz > 32767 { zz -= 65536 }
+
+        return (x: xx, y: yy, z: zz)
     }
 
     private func openIC2(sensor: UInt8, devId: Int32, whoAmI: UInt8) -> CInt? {
