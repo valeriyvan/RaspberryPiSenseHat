@@ -1,6 +1,8 @@
 <p align="center" style="padding-bottom:50px;">
-	<a href="https://raw.githubusercontent.com/valeriyvan/RaspberryPiSenseHat/main/LICENSE"><img src="http://img.shields.io/badge/License-MIT-blue.svg?style=flat"/></a>
-	<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift-5.x-orange.svg?style=flat"/></a> 
+<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift-5.x-orange.svg?style=flat"/></a> 
+<a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/SPM-compatible-brightgreen.svg"/></a> 
+<a href="https://github.com/valeriyvan/RaspberryPiSenseHat"><img src="https://img.shields.io/badge/Platforms-%20Linux-lightgrey.svg"/></a> 
+<a href="https://raw.githubusercontent.com/valeriyvan/RaspberryPiSenseHat/main/LICENSE"><img src="http://img.shields.io/badge/License-MIT-blue.svg?style=flat"/></a>
 </p>
 
 # Swift package `SenseHat` for Raspberry Pi Sense Hat
