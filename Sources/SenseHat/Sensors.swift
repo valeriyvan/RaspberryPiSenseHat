@@ -1,6 +1,6 @@
 /**
  *  SenseHat
- *  Copyright (c) Valeriy Van 2020
+ *  Copyright (c) Valeriy Van 2022
  *  MIT license - see LICENSE.md
  */
 
@@ -184,7 +184,7 @@ extension SenseHat {
         let press_out_l = i2c_smbus_read_byte_data(fileDescriptor, register: PRESS_OUT_L)
         let press_out_h = i2c_smbus_read_byte_data(fileDescriptor, register: PRESS_OUT_H)
 
-        // Temperature output is signed number despite it isn't clearly stated in sensor datasheet.
+        // Temperature output is signed number despite it isn't clearly stated in sensor data sheet.
         let temp_out = (Int16(temp_out_h!) << 8) | Int16(temp_out_l!)
         if logRawReadings {
             print("temp_out = \(temp_out)")
@@ -195,7 +195,7 @@ extension SenseHat {
         }
 
         // Calculate output values.
-        // Formulas come from datasheet https://www.st.com/resource/en/datasheet/lps25h.pdf
+        // Formulas come from data sheet https://www.st.com/resource/en/datasheet/lps25h.pdf
         let T_DegC = 42.5 + (Double(temp_out) / 480.0)
         if logRawReadings {
             print("T_DegC = \(T_DegC)")
