@@ -25,17 +25,17 @@ Features:
 * ✅ [life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) game;
 
 TODO:
-* improve gyroscope/accelerometer/magnitometer sensors reading;
+* improve gyroscope/accelerometer/magnetometer sensors reading;
 * add conversion of RGB color to Rgb565;
-* add cyrillic font 8x8;
+* add Cyrillic font 8x8;
 * add 3x5 font;
 * replace C fonts with Swift ones;
-* show arbitarary image on LED matrix;
+* show arbitrary image on LED matrix;
 * show preprocessed video;
 * menu to show readings from any of available sensors;
 * mode for rotating screen depending on gyro readings;
 * emulator of SenseHat LED matrix for Web;
-* Kalman filtering for accelerometer/gyro/magnitometer;
+* Kalman filtering for accelerometer/gyro/magnetometer;
 * add analog clock demo app.
 
 # Usage
@@ -158,7 +158,7 @@ if let p = senseHat.pressure() {
 
 # Useful links
 
-Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some usefull links:
+Unfortunately Data sheet or Programmer's manual for Raspberry Pi Sense Hat doesn't exist or I have failed to find it. Here are some useful links:
 
 * Official page on raspberrypi.org [Sense HAT](https://www.raspberrypi.org/products/sense-hat/);
 * [Astro Pi: Flight Hardware Tech Specs](https://www.raspberrypi.org/blog/astro-pi-tech-specs/) names all sensors of SenseHat with links on datasheets;
@@ -166,7 +166,7 @@ Unfortunately Datasheet or Programmer's manual for Raspberry Pi Sense Hat doesn'
 * Official Python module [sense-hat](https://pythonhosted.org/sense-hat/);
 * Source of Python module [sense-hat](https://github.com/astro-pi/python-sense-hat);
 * [Getting started with the Sense HAT](https://projects.raspberrypi.org/en/projects/getting-started-with-the-sense-hat);
-* Rust library [sensehat-screen](https://docs.rs/sensehat-screen/) where it's expained how RGB is packed in two bytes in so called `Rgb565`;
+* Rust library [sensehat-screen](https://docs.rs/sensehat-screen/) where it's explained how RGB is packed in two bytes in so called `Rgb565`;
 * Linux [The Frame Buffer Device API](https://www.kernel.org/doc/Documentation/fb/api.txt) used to access pixel buffer;
 * Data sheet for [LSM9DS1](https://www.st.com/resource/en/datasheet/lsm9ds1.pdf), this might be useful [Reading from FIFO](https://github.com/kriswiner/LSM9DS1/issues/5);
 * Guide to install Swift on Raspberry Pi [buildSwiftOnARM](https://github.com/uraimo/buildSwiftOnARM) used to install prebuilt Swift 5.1.5 TODO: describe what I've done differently;
