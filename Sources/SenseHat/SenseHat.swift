@@ -1,6 +1,6 @@
 /**
  *  SenseHat
- *  Copyright (c) Valeriy Van 2020
+ *  Copyright (c) Valeriy Van 2022
  *  MIT license - see LICENSE.md
  */
 
@@ -32,10 +32,10 @@ public class SenseHat {
     /// Creates `SenseHat` object representing Raspberry Pi Sense Hat shield.
     /// Tries to open frame buffer file on location `/dev/XXX` where `XXX` is
     /// provided with parameter `frameBuffer`. Result of initializer is `nil`
-    /// if openning frame buffer file fails.
+    /// if opening frame buffer file fails.
     ///
     /// It doesn't make sense to create several instances of `SenseHat` class
-    /// openning same frame buffer file. Result of doing this undefined.
+    /// opening same frame buffer file. Result of doing this undefined.
     ///
     /// - Parameters:
     ///   - frameBufferDevice: Name of frame buffer device file. Usually it's
@@ -263,11 +263,11 @@ public class SenseHat {
     }
 
     /// Draws `character` on LED matrix using `color` and `background` as foreground
-    /// and backround with respect of `orientation` property.
+    /// and background with respect of `orientation` property.
     ///
     /// - Parameters:
     ///   - character: `Character` to be shown on matrix.
-    ///   - color: Boreground color.
+    ///   - color: Foreground color.
     ///   - background: Background color.
     @inlinable
     public func show(character: Character, color c: Rgb565, background b: Rgb565 = .black) {
@@ -281,7 +281,7 @@ public class SenseHat {
     ///
     /// - Parameters:
     ///   - character: `Character` to be shown on matrix.
-    ///   - color: Boreground color.
+    ///   - color: Foreground color.
     ///   - background: Background color.
     /// - Returns: Instance of `Data` struct.
     public func data(character: Character, color c: Rgb565, background b: Rgb565 = .black) -> Data {
@@ -374,9 +374,9 @@ public class SenseHat {
     ///
     /// - Parameters:
     ///   - string: String.
-    ///   - secPerChar: Time for one character to slide from one edge of matric
+    ///   - secPerChar: Time for one character to slide from one edge of matrix
     ///     to another.
-    ///   - color: Forground color of string.
+    ///   - color: Foreground color of string.
     ///   - background: Background color of string.
     public func show(string: String, secPerChar temp: Double = 0.1, color: Rgb565, background: Rgb565 = .black) {
         let delay: useconds_t = useconds_t(Double(1_000_000) * temp / Double(indices.count))
@@ -422,7 +422,7 @@ extension SenseHat {
     ///   - device: Name of device file.
     ///   - joystickCallback: Callback function.
     ///   - joystickCallbackDispatchQueue: Dispatch queue for callback.
-    /// - Returns: True if openning joystick device succeeded, false otherwise.
+    /// - Returns: True if opening joystick device succeeded, false otherwise.
     ///
     /// TODO: implement device file lookup
     public func register(device: String = "event0", joystickCallback: @escaping JoystickCallback, joystickCallbackDispatchQueue: DispatchQueue = .global(qos: .background)) -> Bool {
