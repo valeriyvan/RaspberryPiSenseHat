@@ -172,5 +172,7 @@ Unfortunately Data sheet or Programmer's manual for Raspberry Pi Sense Hat doesn
 * Guide to install Swift on Raspberry Pi [buildSwiftOnARM](https://github.com/uraimo/buildSwiftOnARM) used to install prebuilt Swift 5.1.5 TODO: describe what I've done differently;
 * [3D printing Astro Pi case](https://projects.raspberrypi.org/en/projects/astro-pi-flight-case).
 
+<a href="https://www.buymeacoffee.com/valeriyvan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ![Blinking](https://github.com/valeriyvan/RaspberryPiSenseHat/blob/main/images/IMG_3369_480.mov "Blinking")
 
